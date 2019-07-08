@@ -7,7 +7,7 @@ Created on Fri Jul  5 13:20:45 2019
 
 import sys
 
-def percent_print(i, i_max, interval=1):
+def percent_print(i, i_max, interval=1, length=50):
     """
     Print a progress bar or percentage value
     Parameters
@@ -31,14 +31,19 @@ def percent_print(i, i_max, interval=1):
         # sys.stdout.write("\r %.1f %% Done" % (100*i/i_max))
 
         # print progress bar
-        m = int(50 * i/i_max) + 1
-        n = 50 - m
+        m = int(length * i/i_max) + 1
+        n = length - m
         sys.stdout.write("\rProgress |" + "#"*m + " "*n + "|")
 
         # update the string on screen
         sys.stdout.flush()
         return True
-
+		
+	elif i==i_max:
+		sys.stdout.write("\rProgress |" + "#"*length + "|")
+		sys.stdout.flush()
+        return True
+		
     return False
 	
 	

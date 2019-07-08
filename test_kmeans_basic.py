@@ -24,9 +24,6 @@ class Test_kmeans_basic(unittest.TestCase):
         assert len(obj.clusters) == 10, "there must be 10 clusters"
 
         obj.update_clusters()
-
-        assert all([len(o) for o in obj.clusters.values()]), "No cluster should be empty"
-
         obj.update_centroids()
         obj.update_clusters()
 
