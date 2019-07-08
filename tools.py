@@ -42,11 +42,29 @@ def percent_print(i, i_max, interval=1):
     return False
 	
 	
-from numpy import array
+import numpy as np
 from PIL import Image
 
 def get_img(path):
     "Load an image as a numpy array"
     img = Image.open(path)
-    arr = array(img.convert('RGB')).astype(float)/255.
+    arr = np.array(img.convert('RGB')).astype(float)/255.
     return arr
+	
+
+import torch
+import random
+
+def set_seed(seed):
+    """
+    Use this to set ALL the random seeds to a fixed value and take out any randomness from cuda kernels
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    torch.backends.cudnn.benchmark = False  ##uses the inbuilt cudnn auto-tuner to find the fastest convolution algorithms. -
+    torch.backends.cudnn.enabled   = False
+
+    return True
