@@ -6,13 +6,14 @@ Created on Thu Jun 27 11:27:49 2019
 """
 
 import unittest
+import torch
 import numpy as np
 from kmeans_basic import kmeans
 from tools import set_seed, get_img
 
 class Test_kmeans_basic(unittest.TestCase):
 
-    def combined_test(self):
+    def test_combined(self):
     
         set_seed(10)
 

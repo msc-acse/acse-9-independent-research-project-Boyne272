@@ -20,48 +20,62 @@ class kmeans():
         # store vectors
         self.vectors = vectors.float()
         self.ndim = vectors.shape[-1]
-        self.mean = self.vectors.mean(dim=0)
-        self.std = self.vectors.std(dim=0)
         
         # setup centroids
         self.N = number_centroids
         self.clusters = dict([(i, []) for i in range(self.N)])
         self.initalise_centroids()
 
+        self.dist_array = torch.empty([len(vectors), self.N])
+    
     
     def initalise_centroids(self):
+        self.mean = self.vectors.mean(dim=0)
+        self.std = self.vectors.std(dim=0)
         self.centroids = (torch.randn(self.N, self.ndim) + self.mean) * self.std
         
         
-    def distance(self, a, b):
-        return (a-b).norm()
+    def distance(self, cent, vecs):
+        return (cent-vecs).norm(dim=1)
         
         
+#     def update_clusters_old(self):
+        
+#         # clear the old clusters
+#         self.clusters = dict([(i, []) for i in range(self.N)])
+        
+#         # for every vector
+#         for vec_id, vecs in enumerate(self.vectors):
+#             min_dist = torch.Tensor([float("Inf")])
+#             min_cent = -1
+            
+#             # find the min centroid distance
+#             for cent_id, cent in enumerate(self.centroids):
+#                 dist = self.distance(cent, vecs)
+#                 if dist < min_dist:
+#                     min_dist = dist
+#                     min_cent = cent_id
+            
+#             self.clusters[min_cent].append(vec_id)
+            
+            
     def update_clusters(self):
         
-        # clear the old clusters
-        self.clusters = dict([(i, []) for i in range(self.N)])
+        for i in range(self.N):
+            self.dist_array[:, i] = self.distance(self.centroids[i], self.vectors)
+            
+        self.cluster_array = torch.argmin(self.dist_array, dim = 1)
         
-        # for every vector
-        for vec_id, vecs in enumerate(self.vectors):
-            min_dist = torch.Tensor([float("Inf")])
-            min_cent = -1
-            
-            # find the min centroid distance
-            for cent_id, cent in enumerate(self.centroids):
-                dist = self.distance(cent, vecs)
-                if dist < min_dist:
-                    min_dist = dist
-                    min_cent = cent_id
-            
-            self.clusters[min_cent].append(vec_id)
+        for i in range(self.N):
+            self.clusters[i] = (self.cluster_array==i).nonzero().squeeze()
+    
     
     
     def update_centroids(self):
         "mean method"
         for cent, vec_ids in self.clusters.items():
-            if vec_ids != []:
-                self.centroids[cent] = torch.Tensor(self.vectors[vec_ids]).mean(dim=0)
+            if vec_ids.numel() != 0:
+                self.centroids[cent] = self.vectors[vec_ids].mean(dim=0)
             else:
                 self.centroids[cent] = (torch.randn(1, self.ndim) + self.mean) * self.std
         
@@ -100,6 +114,3 @@ if __name__ == '__main__':
     
     obj.iterate(10)
     obj.plot()
-    
-            
-            
