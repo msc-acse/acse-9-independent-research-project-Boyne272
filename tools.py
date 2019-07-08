@@ -38,12 +38,12 @@ def percent_print(i, i_max, interval=1, length=50):
         # update the string on screen
         sys.stdout.flush()
         return True
-		
-	elif i==i_max:
-		sys.stdout.write("\rProgress |" + "#"*length + "|")
-		sys.stdout.flush()
+
+    elif i==i_max:
+        sys.stdout.write("\rProgress |" + "#"*length + "|")
+        sys.stdout.flush()
         return True
-		
+
     return False
 	
 	
