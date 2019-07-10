@@ -73,3 +73,54 @@ def set_seed(seed):
     torch.backends.cudnn.enabled   = False
 
     return True
+	
+	
+import time as tm
+import matplotlib.pyplot as plt
+import sys
+
+class progress_bar():
+    
+    def __init__(self, imax, refresh=1, length=50):
+        
+        # store parameters
+        self.imax = imax
+        self.length = length
+        self.refresh = refresh
+        
+        # create the time and iteration stores
+        self.times = []
+        self.iterations = []
+        self.start = tm.clock()
+        
+        
+    def add_time(self, iteration):
+        "store the current time and iteration"
+        self.times.append(tm.clock()-self.start)
+        self.iterations.append(iteration)
+        
+    def print_bar(self, i):
+        "update the progress bar"
+        m = int(self.length * i/self.imax) + 2
+        n = self.length - m
+        sys.stdout.write("\rProgress |" + "#"*m + " "*n + "| %.4f s" % self.times[-1])
+        
+    def __call__(self, i):
+        "if on correct iteration update the progress bar and store the time"
+        if (i % self.refresh) == 0:
+            self.add_time(i)
+            self.print_bar(i)
+            return True
+        else:
+            return False
+        
+    def plot_time(self, ax=None):
+        "plot the time vs iterations on the axis if given"
+        
+        if not ax:
+            fig, ax = plt.subplots()
+            
+        ax.plot(self.iterations, self.times, '-o')
+        ax.set(xlabel="Iteration", ylabel="Time (s)")
+        
+        return ax
