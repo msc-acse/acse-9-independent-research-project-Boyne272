@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  4 17:08:17 2019
-
-@author: Richard Bonye
-"""
-
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,6 +7,7 @@ from time import clock
 
 
 #%%
+
 
 class kmeans_img():
     """
@@ -70,10 +64,10 @@ class kmeans_img():
         (x, y, r, g, b)"
         """
         vecs = np.zeros([self.n_pixels, 5])
-        X, Y = np.meshgrid(self.x_dim, self.y_dim)
-        avg = (self.x_dim + self.y_dim) / 2
-        vecs[:, 0] = X.ravel()/avg
-        vecs[:, 1] = Y.ravel()/avg
+        x, y = range(self.x_dim), range(self.y_dim)
+        X, Y = np.meshgrid(x, y)
+        vecs[:, 0] = X.ravel()
+        vecs[:, 1] = Y.ravel()
         vecs[:, 2] = img[:, :, 0].ravel()
         vecs[:, 3] = img[:, :, 1].ravel()
         vecs[:, 4] = img[:, :, 2].ravel()
@@ -86,6 +80,7 @@ class kmeans_img():
         Initialise centroids on nk random points so they are not empty
         """
         indexs = torch.randint(0, self.n_pixels, [self.N]) ####################
+#         print(indexs)
         self.centroids = self.vectors[indexs]
         
         
@@ -144,21 +139,21 @@ class kmeans_img():
                 zeros = np.zeros_like(mask)
                 mask = np.dstack([mask, zeros, zeros, mask])
         
-        return mask
-            
-            
-#%%
+        return mask 
+		
+		
+		
+if __name__ == '__main__':
 
-# if __name__ == '__main__':
-    
-#     # generate random 2d data
-#     N = 10000
-#     x = torch.randn(N, 2, dtype=torch.float64)
-    
-#     # create the kmeans object
-#     obj = kmeans(x, 20)
-#     obj.update_clusters()
-#     obj.plot().set(title='initial')
-    
-#     obj.iterate(10)
-#     obj.plot()
+	from tools import get_img
+	from kmeans_img import kmeans_img 
+	set_seed(10)
+
+	img = get_img("images/TX1_white_cropped.tif")
+	obj = kmeans_img(img, 20, dist_func=dat_distance_metric)
+	obj.iterate(10)
+
+	mask = obj.get_mask(edge=True, rgba=True)
+	fig, ax = plt.subplots(figsize=[20, 20])
+	ax.imshow(img)
+	ax.imshow(mask)
