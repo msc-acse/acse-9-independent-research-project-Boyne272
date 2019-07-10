@@ -18,7 +18,7 @@ class Test_kmeans_local_failed(unittest.TestCase):
         img = get_img("images/TX1_polarised_cropped.tif")
         obj = kmeans_local(img, [4,4])
 
-        assert len(obj.vector_bins.unique()) == 16, "should be 16 cells"
+        assert len(np.unique(obj.vector_bins)) == 16, "should be 16 cells"
         assert len(obj.bin_dict) == 16, "should be 16 cells"
         assert len(obj.bin_dict[0]) == 4, "corner cell should only have 3 neighbours and itself"
         assert len(obj.bin_dict[1]) == 6, "edge cell should only have 5 neighbours and itself"
