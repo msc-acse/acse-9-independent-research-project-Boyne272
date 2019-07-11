@@ -84,7 +84,7 @@ class progress_bar():
     def __init__(self, imax, refresh=1, length=50):
         
         # store parameters
-        self.imax = imax
+        self.imax = imax - 1
         self.length = length
         self.refresh = refresh
         
@@ -101,7 +101,7 @@ class progress_bar():
         
     def print_bar(self, i):
         "update the progress bar"
-        m = int(self.length * i/self.imax) + 2
+        m = int(self.length * i/self.imax) + 1
         n = self.length - m
         sys.stdout.write("\rProgress |" + "#"*m + " "*n + "| %.4f s" % self.times[-1])
         
