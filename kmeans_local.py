@@ -10,13 +10,13 @@ class img_base():
     The base needed to convert a image array into a 5d vector
     """
     
-    def __init__(self, img):
+    def __init__(self, img, **kwargs):
+        "setup the img and vectors"
         
         assert img.ndim == 3, "image must be a 3d array"
         assert img.shape[-1] == 3, "image must be of form (x ,y, rgb)"
         
         self.dim_y, self.dim_x = img.shape[:2]
-#         self.dim_x, self.dim_y = img.shape[:2]
 
         self.Np = self.dim_x * self.dim_y      # the number of pixels
         self.vectors = self.img_to_vectors(img)
@@ -92,7 +92,8 @@ class bin_base():
     The base needed to bin vectors into a given grid
     """
     
-    def __init__(self, bin_grid):
+    def __init__(self, bin_grid, **kwargs):
+        "Setup the image grid with binned pixels into"
         
         assert len(bin_grid) == 2, "bin grid must be 2d"
         assert type(bin_grid[0]) == int, "grid must be integers"
@@ -153,19 +154,105 @@ class bin_base():
     def index_to_cords (self, i):
         return i%self.Nx, int(i/self.Nx)
     
-    
     def cords_to_index(self, x, y):
         return y * self.Nx + x
        
-
-
-class kmeans_local(img_base, bin_base):
-    
-    def __init__(self, img, bin_grid):
         
-        # setup the image and bin_grid from the base classes
-        img_base.__init__(self, img)
-        bin_base.__init__(self, bin_grid)
+        
+class distance_metrics():
+    """
+    This holds all the different distance metric choices. Each function
+    find the distance between every vector pair in two rank two tensors
+    """
+    
+    def __init__(self, choice, **kwargs):
+        
+        if choice == 'normal':
+            self.distance = self.distance_normal
+            
+        elif choice == 'default':
+            self.distance = self.distance_scaled
+            if 'factor' in kwargs.keys():
+                self.factor = kwargs['factor']
+            else:
+                self.factor = 1
+            
+        elif choice == 'custom':
+            if 'dist_func' in kwargs.keys():
+                self.distance = kwargs['dist_func']
+            else:
+                raise(ValueError)
+        
+        else:
+            raise(ValueError)
+    
+    
+    def distance_normal(self, vecs, clusts):
+        """
+        Find the distance between every vector and every cluster
+        vecs and clusts are 2 rank tensors with samples on the first dimension
+        returns a rank 2 tensor with samples on the first dimension and distance
+        to each cluster on the second
+        """
+        displacement = clusts - vecs[:, None]
+        return displacement.norm(dim=2)
+
+    
+    def distance_scaled(self, vecs, clusts):
+        """
+        Find the distance between every vector and every cluster
+        vecs and clusts are 2 rank tensors with samples on the first dimension
+        returns a rank 2 tensor with samples on the first dimension and distance
+        to each cluster on the second
+        """
+        col_clust, col_vec = clusts[:, 2:], vecs[:, 2:]
+        pos_clust, pos_vec = clusts[:, :2], vecs[:, :2]
+        
+        col_dist = (col_clust - col_vec[:, None]).norm(dim=2)
+        pos_dist = (pos_clust - pos_vec[:, None]).norm(dim=2)
+
+        return col_dist + pos_dist * self.factor / np.sqrt(self.Np / self.Nk)
+    
+    
+
+class kmeans_local(img_base, bin_base, distance_metrics):
+    """
+    Implements Kmeans clustering on an image in 5d color position space
+    using localised bins on a regular grid to enforce locality.
+    """
+    
+    def __init__(self, img, bin_grid, dist_metric='default', **kwargs):
+        """
+        Parameters
+        ----------
+        
+        img : 3d numpy array
+            Image to be segmented by kmeans,
+            expected in shape [x_dim, y_dim, rgb] with all values in the
+            interval [0, 1], not 255.
+            
+        bin_grid : tuple
+            Length of 2, gives the number of initial partitions in x and y
+            respectivly, therefore the number of segments is the product of
+            these. Both must be a factor of the x, y dimensions for the whole
+            image. This intial segmentation also restrains the kmeans centers
+            in space, forcing locality of segments and speeding up the
+            algorithm.
+            
+        dist_metric : string, optional
+            Choose the of calculating distance between two vectors:
+            - 'normal' finds the normal distance without scaling either
+                position or color space
+            - 'default' finds the normal distance with scaling the position
+                space by the bin widths. Can also pass the kwarg 'factor'
+                with an additional scaling factor for the position space.
+            - 'custom' pass a fucntion to be used in the kwarg 'dist_func'
+        """
+        
+        # setup the image, bin_grid and distance metric base classes
+        img_base.__init__(self, img, **kwargs)
+        bin_base.__init__(self, bin_grid, **kwargs)
+        distance_metrics.__init__(self, dist_metric, **kwargs)
         
         # sort each vector into a bin (fixed)
         self.vec_bins_tensor = self.bin_vectors(self.vectors)
@@ -214,55 +301,21 @@ class kmeans_local(img_base, bin_base):
             centroid_is_adjasent = np.isin(cent_bins_tensor, adjacent_bins)
             centroids_to_search = np.where(centroid_is_adjasent)[0]
             centroids_to_search = torch.from_numpy(centroids_to_search).int()
-#             print('\n\n\n Centroid ', i, ' searching centroids ', centroids_to_search) #verbose
             
             # find the distance between every vector and each centroid
             vecs_in_bin = self.vec_bins_list[i]
             vecs_tensors = self.vectors[vecs_in_bin]
             cents_tensors = self.centroids[centroids_to_search.long()]
             dist = self.distance(vecs_tensors, cents_tensors) 
-#             print('Vectors\n', vecs_tensors[:10], '\n\n Centers\n',
-#                   cents_tensors[:10], '\n\n Distances\n', dist[:10]) #verbose
             
             # find which centroids are the closest and update them
             min_indexs = torch.argmin(dist, dim=1).long()
             min_clusters = centroids_to_search[min_indexs]
-#             print("\n Minimums\n", min_clusters.unique()) #verbose
             self.cluster_tensor[vecs_in_bin] = min_clusters
         
         # recacluate the cluster dictionary
         for i in range(self.Nk):
             self.cluster_list[i] = (self.cluster_tensor==i).nonzero().squeeze()     
-        
-        
-    def distance(self, vecs, clusts, factor=1):
-        """
-        Find the distance between every vector and every cluster
-        vecs and clusts are 2 rank tensors with samples on the first dimension
-        returns a rank 2 tensor with samples on the first dimension and distance
-        to each cluster on the second
-        """
-        col_clust, col_vec = clusts[:, 2:], vecs[:, 2:]
-        pos_clust, pos_vec = clusts[:, :2], vecs[:, :2]
-        
-        col_dist = (col_clust - col_vec[:, None]).norm(dim=2)
-        pos_dist = (pos_clust - pos_vec[:, None]).norm(dim=2)
-        
-        H = np.sqrt(self.Np / self.Nk)
-        
-        return col_dist + pos_dist * factor / H 
-        
-        
-    def distance_normal(self, vecs, clusts):
-        """
-        Find the distance between every vector and every cluster
-        vecs and clusts are 2 rank tensors with samples on the first dimension
-        returns a rank 2 tensor with samples on the first dimension and distance
-        to each cluster on the second
-        """
-        displacement = clusts - vecs[:, None]
-        distance = displacement.norm(dim=2)
-        return distance
     
     
     def iterate(self, n_iter):
@@ -278,6 +331,15 @@ class kmeans_local(img_base, bin_base):
         
         
     def plot(self, option='default', ax=None):
+        """
+        Plot a one fo the following options on an axis if specified:
+            - 'default' orinal image and the segement outlines
+            - 'edges' just the outlines in a transparent manner
+            - 'img' just the orinal image 
+            - 'centers' each kmean centroid
+            - 'bins' the bin mesh used
+            - 'time' the iterations vs time if iterate was called
+        """
         
         if ax == None:
             fig, ax = plt.subplots()
@@ -332,7 +394,7 @@ if __name__ == '__main__':
     # setup
     set_seed(10)
     img = get_img("images/TX1_white_cropped.tif")
-    obj = kmeans_local(img, [15,20])
+    obj = kmeans_local(img, [20,15])
 
     # plot the initial binning 
     fig, ax = plt.subplots(figsize=[22,22])
