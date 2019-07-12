@@ -1,7 +1,7 @@
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
-from kmeans_local import kmeans_local
+from SLIC import SLIC
 from tools import set_seed, get_img, progress_bar
 
 
