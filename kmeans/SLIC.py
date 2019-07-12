@@ -119,7 +119,7 @@ class bin_base():
         x_bins = (vecs[:, 0] / self.bin_dx).floor()
         y_bins = (vecs[:, 1] / self.bin_dy).floor()
         output = y_bins * self.Nx + x_bins
-        return output.int()
+        return output.long()
     
     
     def find_adjasent_bins(self):
@@ -134,8 +134,8 @@ class bin_base():
             cordinates = self.neighbours(x, y, self.Nx, self.Ny)
             # convert the cordinates back into an index
             indexs = [ self.cords_to_index(x_, y_) for x_,y_ in cordinates ]
-            # store the indexs
-            adj_bins.append(indexs)
+            # store the indexs in tensor form
+            adj_bins.append(torch.tensor(indexs))
         return adj_bins
     
     
@@ -215,7 +215,7 @@ class distance_metrics():
     
     
 
-class kmeans_local(img_base, bin_base, distance_metrics):
+class SLIC(img_base, bin_base, distance_metrics):
     """
     Implements Kmeans clustering on an image in 5d color position space
     using localised bins on a regular grid to enforce locality.
@@ -231,11 +231,11 @@ class kmeans_local(img_base, bin_base, distance_metrics):
             expected in shape [x_dim, y_dim, rgb] with all values in the
             interval [0, 1], not 255.
             
-        bin_grid : tuple
-            Length of 2, gives the number of initial partitions in x and y
-            respectivly, therefore the number of segments is the product of
-            these. Both must be a factor of the x, y dimensions for the whole
-            image. This intial segmentation also restrains the kmeans centers
+        bin_grid : tuple length 2
+            The number of initial partitions in x and y respectivly,
+            therefore the number of segments is the product of these. 
+            Both must be a factor of the x, y dimensions for the whole
+            image. This intial segmentation restrains the kmeans centers
             in space, forcing locality of segments and speeding up the
             algorithm.
             
@@ -249,26 +249,36 @@ class kmeans_local(img_base, bin_base, distance_metrics):
             - 'custom' pass a fucntion to be used in the kwarg 'dist_func'
         """
         
+        # validate the kwargs
+        valid_args = ['factor']
+        for key in kwargs.keys():
+            assert key in valid_args, "kwarg " + key + " was not recognised"
+        
         # setup the image, bin_grid and distance metric base classes
         img_base.__init__(self, img, **kwargs)
         bin_base.__init__(self, bin_grid, **kwargs)
         distance_metrics.__init__(self, dist_metric, **kwargs)
         
-        # sort each vector into a bin (fixed)
+        # which bin each vector belongs to
         self.vec_bins_tensor = self.bin_vectors(self.vectors)
-        # store in a list with element i being the vectors in bin i
+        
+        # which vectors are in each bin
         self.vec_bins_list = [(self.vec_bins_tensor==i).nonzero().squeeze()
                               for i in range(self.Nk)]
         
-        # make the initial clusters the same as the bins (changes)
+        # which cluster each vector belongs to
         self.cluster_tensor = self.vec_bins_tensor.clone()
-        # store the indexs of these tensors in a dictionary (changes)
+        
+        # which vectors are in each cluster
         self.cluster_list = [(self.cluster_tensor==i).nonzero().squeeze()
                              for i in range(self.Nk)]
         
-        # create the initial centroids
+        # initialise the centroids
         self.centroids = torch.empty([self.Nk, 5], dtype=torch.float)
         self.update_centroids()
+        
+        # stores the distances between vectors and local centroids
+        self.vc_dists = []
         
         
     def update_centroids(self):
@@ -282,38 +292,51 @@ class kmeans_local(img_base, bin_base, distance_metrics):
             self.centroids[i] = self.vectors[vecs_in_cluster].mean(dim=0)
             
             
-    def update_clusters(self):
+    def update_distances(self):
         """
-        Find which vectors belong to which cluster by find the ditance
-        between every vector in a bin and every centroid in that bin or
-        the neighbouring bins.
+        Find the ditance between every vector in a bin and every centroid
+        in that or the neighbouring bins.
         """
         
         # bin the centroids
         cent_bins_tensor = self.bin_vectors(self.centroids)
         
+        # reset the distances
+        self.vc_dists = []
+        
         # for every bin grid (same as number of centroids)
         for i in range(self.Nk):
             
-            # find which centroids are in adjasent bins
-            # Could be optimised ##################
-            adjacent_bins = self.adj_bins[i]
-            centroid_is_adjasent = np.isin(cent_bins_tensor, adjacent_bins)
-            centroids_to_search = np.where(centroid_is_adjasent)[0]
-            centroids_to_search = torch.from_numpy(centroids_to_search).int()
-            
-            # find the distance between every vector and each centroid
+            # relevant centroids and vectors
+            centroids_to_search = self.adj_bins[i]
             vecs_in_bin = self.vec_bins_list[i]
+        
+            # find distance between vectors in this bin and local centroids
             vecs_tensors = self.vectors[vecs_in_bin]
-            cents_tensors = self.centroids[centroids_to_search.long()]
+            cents_tensors = self.centroids[centroids_to_search]
             dist = self.distance(vecs_tensors, cents_tensors) 
+            self.vc_dists.append(dist)
+            
+            
+    def update_clusters(self):
+        """
+        Find which vectors belong to which cluster by taking the mimunum of
+        the distances.
+        """
+        
+        # for every bin grid (same as number of centroids)
+        for i in range(self.Nk):
+            
+            # relevant centroids and vectors
+            vecs_in_bin = self.vec_bins_list[i]
+            centroids_to_search = self.adj_bins[i]
             
             # find which centroids are the closest and update them
-            min_indexs = torch.argmin(dist, dim=1).long()
+            min_indexs = torch.argmin(self.vc_dists[i], dim=1)
             min_clusters = centroids_to_search[min_indexs]
             self.cluster_tensor[vecs_in_bin] = min_clusters
         
-        # recacluate the cluster dictionary
+        # re-allocate which vectors are in each cluster
         for i in range(self.Nk):
             self.cluster_list[i] = (self.cluster_tensor==i).nonzero().squeeze()     
     
@@ -325,39 +348,61 @@ class kmeans_local(img_base, bin_base, distance_metrics):
         self.progress_bar = progress_bar(n_iter)
     
         for i in range(n_iter):
+            self.update_distances()
             self.update_clusters()
             self.update_centroids()
             self.progress_bar(i)
-        
-        
-    def plot(self, option='default', ax=None):
+
+
+    def plot(self, option='default', ax=None, path=None, figsize=[22,22]):
         """
         Plot a one fo the following options on an axis if specified:
-            - 'default' orinal image and the segement outlines
-            - 'edges' just the outlines in a transparent manner
-            - 'img' just the orinal image 
+            - 'default' image and the segement outlines
+            - 'setup' image, bin edges and cluster centers
+            - 'segments' the sedment mask
+            - 'edges' just the segment outlines in a transparent manner
+            - 'img' just the orinal image
             - 'centers' each kmean centroid
-            - 'bins' the bin mesh used
+            - 'bin_edges' the bin mesh used
+            - 'bins' both 'img' and 'bin_edges'
             - 'time' the iterations vs time if iterate was called
+            
+        If path is given the image will be saved on that path.
+        
+        If no axis is given one can give a figsize wanted.
         """
         
+        # validate opiton
+        valid_ops = ['default', 'setup', 'edges', 'img', 'centers', 'bins', 'time',
+                     'bin_edges', 'segments', 'setup']
+        assert option in valid_ops, "option not recoginsed"
+        
+        # create an axis if not given
         if ax == None:
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=figsize)
             
         if option == 'default':
-            ax.imshow(self.img)
-            mask = self.tensor_to_mask(self.cluster_tensor)
-            mask = self.outline(mask)
-            mask = self.mask_aplha_values(mask)
-            ax.imshow(mask)
+            self.plot('img', ax)
+            self.plot('edges', ax)
             ax.set(title='Image Segmentation (default)')
-            
+        
+        elif option == 'setup':
+            self.plot('img', ax)
+            self.plot('bin_edges', ax)
+            self.plot('centers', ax)
+            ax.set(title='Image Segmentation (setup)')
+        
+        elif option == 'segments':
+            mask = self.tensor_to_mask(self.cluster_tensor)
+            ax.imshow(mask)
+            ax.set(title='Image Segmentation (segments)')
+        
         elif option == 'edges':
             mask = self.tensor_to_mask(self.cluster_tensor)
             mask = self.outline(mask)
             mask = self.mask_aplha_values(mask)
             ax.imshow(mask)
-            ax.set(title='Image Segmentation (default)')
+            ax.set(title='Image Segmentation (edges)')
             
         elif option == 'img':
             ax.imshow(self.img)
@@ -368,11 +413,15 @@ class kmeans_local(img_base, bin_base, distance_metrics):
                     self.centroids[:, 1].cpu().numpy(), 'm*', ms=20)
             ax.set(title='Image Segmentation (centers)')
 
-        elif option == 'bins':
-            ax.imshow(self.img)
+        elif option == 'bin_edges':
             mask = self.tensor_to_mask(self.vec_bins_tensor)
             mask = self.outline(mask)
             mask = self.mask_aplha_values(mask)
+            ax.imshow(mask)
+            ax.set(title='Image Segmentation (bin_edges)')
+            
+        elif option == 'bins':
+            mask = self.tensor_to_mask(self.vec_bins_tensor)
             ax.imshow(mask)
             ax.set(title='Image Segmentation (bins)')
             
@@ -381,10 +430,9 @@ class kmeans_local(img_base, bin_base, distance_metrics):
             self.progress_bar.plot_time(ax)
             ax.set(title='Image Segmentation (time)')
             
-        else:
-            print("Option " + option + " not recognised\n" + 
-                  "Available options are default, edges, img, centers, bins, time\n")
-            plt.close()
+        # save the figure if wanted
+        if path:
+            plt.savefig(path)
             
             
             
@@ -394,21 +442,18 @@ if __name__ == '__main__':
     # setup
     set_seed(10)
     img = get_img("images/TX1_white_cropped.tif")
-    obj = kmeans_local(img, [20,15])
+    obj = SLIC(img, [20,15])
 
     # plot the initial binning 
-    fig, ax = plt.subplots(figsize=[22,22])
-    obj.plot("bins", ax=ax)
-    obj.plot("centers", ax=ax)
-    ax.set(title='Initial Grid')
+    obj.plot("setup")
+    plt.gca().set(title='Initial Grid')
     
     # iterate
     obj.iterate(10)
     
     # plot the resulting segmentation
-    fig, ax = plt.subplots(figsize=[22, 22])
-    obj.plot('default', ax=ax)
-    ax.set(title='Segmentation after 10 Iterations')
+    obj.plot('default')
+    plt.gca().set(title='Segmentation after 10 Iterations')
     
     # plot the time taken
-    obj.plot('time')
+    obj.plot('time', figsize=[10, 10])
