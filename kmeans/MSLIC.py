@@ -136,7 +136,7 @@ class MSLIC_wrapper():
             self.progress_bar(i)
     
     
-    def plot(self, obj_indexs, option='default', axs=None):
+    def plot(self, obj_indexs, option='default', axs=[None], path=None):
         """
         Calls obj.plot() on each of the SLIC objects given with option
         
@@ -156,14 +156,14 @@ class MSLIC_wrapper():
         """
         
         # set the axis if not given
-        if not axs:
+        if not any(axs):
             N = len(obj_indexs)
             fig, axs = plt.subplots(N, 1, figsize=[N*22, 22])
             axs = np.array([axs]).ravel() # force it be an array even if N = 1
             
         # call the plot routenes
         for i, ax in zip(obj_indexs, axs):
-            self.SLIC_objs[i].plot(option, ax=ax)
+            self.SLIC_objs[i].plot(option, ax=ax, path=path)
             
             
 if __name__ == '__main__':
