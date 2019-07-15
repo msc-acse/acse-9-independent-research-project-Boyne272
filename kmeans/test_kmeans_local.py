@@ -13,6 +13,7 @@ from tools import set_seed, get_img
 
 class Test_kmeans_local(unittest.TestCase):
 
+    
     def test_img_setup(self):
         "test that the img and vectors are made correctly"
         set_seed(10)
@@ -29,6 +30,7 @@ class Test_kmeans_local(unittest.TestCase):
                (obj.vectors[:, 4] <= 1) * (obj.vectors[:, 4] >= 0))
         assert tmp.all(), "all pixel values must be in the range [0, 1]"
         return   
+    
     
     def test_bin_setup(self):
         """
@@ -53,7 +55,7 @@ class Test_kmeans_local(unittest.TestCase):
         return
     
     
-    def test_(self):
+    def test_iteration(self):
         "test that clusters still make sense after a single iteration"
         img = get_img("images/TX1_white_cropped.tif")
         obj = kmeans_local(img, [4,4])
@@ -67,7 +69,8 @@ class Test_kmeans_local(unittest.TestCase):
             "should be exactly 16 clusters"
         return    
     
-    def test_(self):
+    
+    def test_plot(self):
         "check that all the plot code runs (not a full proof test but better than nothing)"
         img = get_img("images/TX1_white_cropped.tif")
         obj = kmeans_local(img, [4,4])

@@ -84,7 +84,7 @@ class progress_bar():
     def __init__(self, imax, refresh=1, length=50):
         
         # store parameters
-        self.imax = imax - 1
+        self.imax = max(imax - 1, 1) # ensure a value of 1 wil not break it
         self.length = length
         self.refresh = refresh
         
