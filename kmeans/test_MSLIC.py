@@ -94,12 +94,12 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         
         # test the new cetroids are still inside the image domain
         # note the * here acts as an and opterator
-        tmp = ((obj.centroids[:, 2] <= 1) * (obj.centroids[:, 2] >= 0) *
-               (obj.centroids[:, 2] <= 1) * (obj.centroids[:, 2] >= 0) *
+        tmp = ((obj.centroids[:, 0] <= obj.dim_x) * (obj.centroids[:, 0] >= 0) *
+               (obj.centroids[:, 1] <= obj.dim_y) * (obj.centroids[:, 1] >= 0) *
                (obj.centroids[:, 2] <= 1) * (obj.centroids[:, 2] >= 0) *
                (obj.centroids[:, 3] <= 1) * (obj.centroids[:, 3] >= 0) *
                (obj.centroids[:, 4] <= 1) * (obj.centroids[:, 4] >= 0))
-        assert tmp.all(), "all pixel values must be in the range [0, 1]"
+        assert tmp.all(), "all pixel values must be in the image domian"
     
     
     def test_plot(self):
@@ -116,10 +116,10 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         # iterate
         obj.iterate(1)
         
-
         for opt in ['default', 'setup', 'edges', 'img', 'centers', 
                     'bins', 'time', 'bin_edges', 'segments', 'setup']:
             obj.plot([0,1], opt)
+            plt.close('all')
         
         # check that plotting a just one instance also works
         obj.plot([0], 'default')
