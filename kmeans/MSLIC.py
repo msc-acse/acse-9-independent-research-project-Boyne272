@@ -104,8 +104,8 @@ class MSLIC_wrapper():
         
         # create the progress bar and store on each of the objects
         self.progress_bar = progress_bar(n_iter)
-        for obj in self.SLIC_objs:
-            obj.progress_bar = self.progress_bar
+#         for obj in self.SLIC_objs:
+#             obj.progress_bar = self.progress_bar
         
         for i in range(n_iter):
             
@@ -155,12 +155,17 @@ class MSLIC_wrapper():
             the SLIC objs is used
         """
         
+        # if the time plot is wanted just use own time plot
+        if opt == 'time':
+            self.progress_bar.plot_time()
+            return
+        
         # set the axis if not given
         if not any(axs):
             N = len(obj_indexs)
             fig, axs = plt.subplots(N, 1, figsize=[N*22, 22])
             axs = np.array([axs]).ravel() # force it be an array even if N = 1
-            
+        
         # call the plot routenes
         for i, ax in zip(obj_indexs, axs):
             self.SLIC_objs[i].plot(option, ax=ax, path=path)
