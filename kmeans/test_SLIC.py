@@ -8,7 +8,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-# from SLIC import SLIC
+from SLIC import SLIC
 from tools import set_seed, get_img
 
 
