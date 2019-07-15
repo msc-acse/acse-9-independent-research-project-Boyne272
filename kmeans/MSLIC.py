@@ -156,7 +156,7 @@ class MSLIC_wrapper():
         """
         
         # if the time plot is wanted just use own time plot
-        if opt == 'time':
+        if option == 'time':
             self.progress_bar.plot_time()
             return
         
