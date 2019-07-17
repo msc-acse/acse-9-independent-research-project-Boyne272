@@ -42,7 +42,7 @@ class merge_wrapper():
             # T as we want in form (N, 2)
             
             # where the mask array is both an edge and has this id
-            bool_arr = (self.work_mask==i) * (self.work_edges)
+            bool_arr = bool_arr * self.work_edges
             edges = np.array(np.where(bool_arr)[::-1]).T
             # [1:-1, 1:-1] so as to not consider outer edges
             
@@ -66,7 +66,8 @@ class merge_wrapper():
     ############################# 
     def compare(self, seg_1, seg_2):
         """
-        Compare these two segments, and merge them if they meet the criteria
+        Compare these two segments, and return true if they meet the criteria
+        to merge
         """
         m1, m2 = seg_1.metrics, seg_2.metrics
         avg_col_diff = np.linalg.norm(m1['avg_color'] - m2['avg_color'])
@@ -126,15 +127,22 @@ class merge_wrapper():
                     
     def iterate(self):
         "The loop to be carried out until the new mesh is made"
+        counter = 1
         while True:
             
+            print("Starting Iteration ", counter)
+            
             self.scan() # find which segments need to be merged
-            if not self.to_merge: break # if to_merge is empty stop
-            print("merging:\n" , self.to_merge)
-            self.merge() # merge all nessesary segments
+            if not self.to_merge: # if to_merge is empty stop
+                print('No segments to merge, terminating\n')
+                break
+            else:
+                print("merging ", len(self.to_merge), " segments\n")
+                self.merge() # merge all nessesary segments
             
             # recreate the segments to represent the new mask
             self.segments, self.seg_ids = self.make_segments()
+            counter += 1
             
             
     def plot(self, option='default', ax=None, **kwargs):
@@ -149,19 +157,18 @@ class merge_wrapper():
         if not ax:
             fig, ax = plt.subplots(figsize=[22, 22])
         
-        # plot recall options
+        # plot combined options
         if option == 'default' or option == 'compare':
             self.plot('img', ax=ax)
             self.plot('orig_edges', ax=ax)
             
-            # fill in every segment that has been merged
-            post_indexs = list(self.directory.values())
-            changed_indexs = list(set([i for i in post_indexs if
-                                       post_indexs.count(i) > 1]))
+            # fill in every segment that was merged
+            post_merge_indexs = list(self.directory.values())
+            changed_indexs = list(set([i for i in post_merge_indexs if
+                                       post_merge_indexs.count(i) > 1]))
             for index in changed_indexs:
-                rgba = self.segments[index].rgba(self.orig_mask.shape,
-                                                 opt='fill')
-                ax.imshow(rgba)
+                self.segments[index].plot(self.orig_mask.shape, ax=ax, 
+                                          opt='fill')
             ax.set(title='merging comparison')
             
         elif option == 'both':
@@ -208,41 +215,47 @@ class merge_wrapper():
         elif option == 'seg_edge' or option == 'seg_fill':
             assert 'seg' in kwargs.keys(),\
                 "must specifiy which segment to plot"
-            
-            self.plot('img', ax=ax)
-            rgba = self.segments[kwargs['seg']].rgba(self.orig_mask.shape,
-                                                        opt=option[4:])
-            ax.imshow(rgba)
+            self.segments[kwargs['seg']].plot(self.orig_mask.shape,
+                                              ax=ax, opt=option[4:])
             ax.set(title='segment ' + str(kwargs['seg']))
         
         
     def rgba(self, mask, color='r'):
         "Take a 2d mask and return a 4d rgba mask for imshow overlaying"
         
+        # create the transparent mask
         zeros = np.zeros_like(mask)
         rgba = np.dstack([zeros, zeros, zeros, mask])
         
+        # set the correct color channel
         i = ['r', 'g', 'b'].index(color)
         rgba[:, :, i] = mask
             
         return rgba
     
     
-    def outline(self, mask):
+    def outline(self, mask, opt='full'):
         """
         Take a 2d mask and use a laplacian convolution to find the segment 
-        outlines for plotting
+        outlines for plotting. Option decides if all directions are to be
+        included 'full' or just horizontal and vertical ones 'edge'
         """
-        ################################ what about a 4 laplacian?
         laplacian = np.ones([3, 3])
-        laplacian[1, 1] = -8
-        edges = sig.convolve2d(mask, laplacian, mode='valid')
-        edges = np.pad(edges, 1, 'edge') # ignore edges
         
-        return (edges > 0).astype(float)
+        if opt == 'full':
+            laplacian[1, 1] = -8
+            
+        elif opt == 'edge':
+            laplacian[1, 1] = -4
+            laplacian[[0, 2, 0, 2], [0, 0, 2, 2]] = 0
+            
+        conv = sig.convolve2d(mask, laplacian, mode='valid')
+        conv = np.pad(conv, 1, 'edge') # ignore edges
+        not_edge = np.isclose(conv, 0)
+        return 1. - not_edge
         
-		
-		
+        
+
 class segment():
     
     def __init__(self, cords, edges, index, wrapper, **kwargs):
@@ -266,44 +279,6 @@ class segment():
         
         # find this segments metrics
         self.metrics = self.calculate_metrics()
-        
-        
-#     def find_edges(self):
-#         """
-#         Loop over every x and find the max and min y values, these are 
-#         the top and bottom edges. Similarly for every y find min and max
-#         x values which are the left and right edges. Caution to avoid
-#         duplicate pixels.
-#         """
-        
-#         # use a set to prevent adding same cordinate twice
-#         edges = set()
-        
-#         # for every x, find the edge pixels in the y direction
-#         for x in np.arange(*self.x_range):
-#             cords_on_line = self.cords[self.cords[:, 0] == x]
-            
-            
-            
-#             if cords_on_line.size == 0:
-#                 print(self.id, x)
-#                 print(self.x_range)
-#                 print(self.y_range)
-#                 print(self.cords)
-                
-                
-                
-#             edges.add((x, cords_on_line[:, 1].min())) # bottom edge
-#             edges.add((x, cords_on_line[:, 1].max())) # top edge
-            
-#         # for every y, find the edge pixels in the x direction
-#         for y in np.arange(*self.y_range):
-#             cords_on_line = self.cords[self.cords[:, 1] == y]
-#             edges.add((cords_on_line[:, 0].min(), y)) # left edge
-#             edges.add((cords_on_line[:, 0].max(), y)) # right edge
-            
-#         # convert set to array
-#         return np.array(list(edges))
     
     
     def identify_edges(self):
@@ -353,26 +328,37 @@ class segment():
     #############################
     
     
-    def rgba(self, shape, opt='edge'):
-        
-        # create the array to plot
+    def plot(self, shape, ax, opt='edge'):
+        """
+        Create a rgba matrix for this segments with the option to plot the:
+            - 'edge' just give the outline of the image
+            - 'fill' the entire segment, translucent to see the image beneath
+        """
         zeros = np.zeros(shape)
         rgba = np.dstack([zeros, zeros, zeros, zeros])
         
         if opt == 'edge':
-            for neigh_id, cords in self.edge_dict.items():
-                red, green, blue = np.random.rand(3)
-                rgba[cords[:,1], cords[:,0], 0] = red
-                rgba[cords[:,1], cords[:,0], 1] = green
-                rgba[cords[:,1], cords[:,0], 2] = blue
-                rgba[cords[:,1], cords[:,0], 3] = 1
+            for n_id, n_cords in self.edge_dict.items():
+                ax.plot(n_cords[:,0], n_cords[:,1], 'x', ms=5, label=n_id)
+            ax.legend()
                 
         elif opt == 'fill':
-            red, green, blue = 0.5 + np.random.rand(3) / 2
+            red, green, blue = np.random.rand(3) / 2
             rgba[self.cords[:,1], self.cords[:,0], 0] = red
             rgba[self.cords[:,1], self.cords[:,0], 1] = green
             rgba[self.cords[:,1], self.cords[:,0], 2] = blue
-            rgba[self.cords[:,1], self.cords[:,0], 3] = 0.7
-
-        return rgba
+            rgba[self.cords[:,1], self.cords[:,0], 3] = 0.6
+            ax.imshow(rgba)
         
+        
+        
+if __name__ == '__main__':
+    
+    # example
+    mask = np.loadtxt('masks/example_mask.txt')
+    img = get_img('images/TX1_white_cropped.tif')
+    wrap = merge_wrapper(img, mask)
+
+    wrap.iterate()
+
+    wrap.plot()
