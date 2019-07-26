@@ -3,12 +3,41 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal as sig
 
-import torch
-import matplotlib.pyplot as plt
-import numpy as np
-import scipy.signal as sig
-
 class merge_wrapper():
+    
+    # edge filters
+    _S0_3 = np.array([[-1, 0, 1],
+                     [-2, 0, 2],
+                     [-1, 0, 1]])
+    _S90_3 = _S0_3.T
+    _S45_3 = np.array([[0 , 1, 2],
+                      [-1, 0, 1],
+                      [-2,-1, 0]])
+    _S135_3 = _S45_3.T
+    _S0_5 = np.array([[1, 2, 3, 2, 1],
+                     [2, 3, 5, 3, 2],
+                     [0, 0, 0, 0, 0],
+                     [-2,-3,-5,-3,-2],
+                     [-1,-2,-3,-2,-1]])
+    _S90_5 = _S0_5.T
+    _S45_5 = np.array([[0 , 2, 3, 2, 1],
+                      [-2, 0, 3, 5, 2],
+                      [-3,-3, 0, 3, 3],
+                      [-2,-5,-3, 0, 2],
+                      [-1,-2,-3,-2, 0]])
+    _S135_5 = _S45_5.T
+    _Laplacian_3 = np.array([[1, 1, 1],
+                            [1, -8, 1],
+                            [1, 1, 1]])
+    _Laplacian_5 = np.array([[1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1],
+                            [1, 1, -24, 1, 1],
+                            [1, 1, 1, 1, 1],
+                            [1, 1, 1, 1, 1]])
+    _avg_7 = np.ones([7,7])/49.
+    _avg_5 = np.ones([5,5])/25.
+    _avg_3 = np.ones([3,3])/9.
+
     
     def __init__(self, img, mask, **kwargs):
         
@@ -16,24 +45,72 @@ class merge_wrapper():
         assert img.shape[:2] == mask.shape, \
             'image and mask must have same x,y dimensions'
         
-        # store mask arrays
-        self.img = img
+        # set the tuneable parameters
+        self._initalise_params(**kwargs)
+        
+        # store input arrays
+        self.img = img 
         self.orig_mask = mask
-        self.orig_edges = self.outline(mask)
         self.work_mask = mask.copy()
+        self._ydim, self._xdim = mask.shape
+        
+        # create derived arrays
+        self.orig_edges = self.outline(mask)
         self.work_edges = self.orig_edges.copy()
-        
-        # derived constants
-        self.y_dim, self.x_dim = mask.shape
-        
+        self.bound_array = self._edge_detection()
+
         # create the segment objects
         self.segments, self.seg_ids = self.make_segments()
         
-        # initalise working vairables
+        # create working vairables
         self.to_merge = []
         self.directory = dict([(n, n) for n in self.seg_ids])
     
     
+    def _initalise_params(self, **kwargs):
+        """
+        All parameters that can be tuned are set here and can be overridden
+        by passing in the correct kwarg. This gives flexibility without the
+        need to add many if statments to other methods.
+        """
+        
+        self._merge_size_rel = 0.02 # relative size to merge if one neighbour
+        self._merge_size_cutoff = 200 # relative size maximum to merge
+
+        self._color_nbins = 20
+        self._color_sim_thresh = .2 # should be below to merge
+        self._color_dif_thresh = .5
+
+        self._edge_present = 2., 5., 7. # above edge is present
+        self._edge_absent = .1, .3, .5 # below edge is not present
+        
+        self._confidence_thresh = 0 # what measure for confidence of merging
+        self._max_passes = 10
+        
+        # let keyword arguments override these defaults 
+        for key, val in kwargs.items():
+            exec('self._' + key + '=' + str(val))
+    
+    
+    def _edge_detection(self):
+        """
+        """
+        
+        zeros = np.zeros_like(self.orig_mask)
+        edge_det = np.dstack([zeros, zeros, zeros, zeros])
+        grey_img = self.img.mean(axis=2)
+        for i, filt in enumerate([self._S0_5, self._S45_5,
+                               self._S90_5, self._S135_5]):
+            edge_det[:, :, i] = sig.convolve2d(grey_img, filt, mode='same')
+
+#           # verbose
+#         for i in range(4):
+#             plt.figure(figsize=[22,22])
+#             plt.imshow(edge_det[:,:,i])
+        
+        return edge_det.astype(float)
+
+
     def make_segments(self):
         "create the segment objects from the current working mask"
         
@@ -46,19 +123,15 @@ class merge_wrapper():
         print('Initalising segments')
         
         for n, i in enumerate(seg_ids):
+            bar(n) # update progress bar
             
-            bar(n)
-            
-            # where the mask array has this id
-            bool_arr = self.work_mask==i
+            bool_arr = self.work_mask==i # segments pixel cords
             cords = np.array(np.where(bool_arr)[::-1]).T
             # [::-1] as np.where returns y,x format
             # T as we want in form (N, 2)
             
-            # where the mask array is both an edge and has this id
-            bool_arr = bool_arr * self.work_edges
+            bool_arr = bool_arr * self.work_edges # segments edge pixels
             edges = np.array(np.where(bool_arr)[::-1]).T
-            # [1:-1, 1:-1] so as to not consider outer edges
             
             segments[i] = (segment(cords, edges, i, self))
             
@@ -74,45 +147,46 @@ class merge_wrapper():
         return np.array([(x_, y_) for x_ in range(x-1, x+2)
                                   for y_ in range(y-1, y+2)
                          if ((x != x_ or y != y_) and   # not the center
-                             (0 <= x_ < self.x_dim) and # not outside x range
-                             (0 <= y_ < self.y_dim))])  # not outside y range
+                             (0 <= x_ < self._xdim) and # not outside x range
+                             (0 <= y_ < self._ydim))])  # not outside y range
     
     
-    ############################# 
-    def compare(self, seg_1, seg_2):
+    def compare(self, seg_1, seg_2, size=True, edge=True, col=True):
         """
         Compare these two segments, and return true if they meet the criteria
-        to merge
+        to merge. Every parameter to merge these can be set as a kwarg when
+        creating this object.
         """
         m1, m2 = seg_1.metrics, seg_2.metrics
-        vote_count = 0
-        vote_thresh = 1
+        confidence = 0
         
-        # handel tiny segments
-        # if the segment is surrunonded by the other segment
-        if seg_1.neighbours == [seg_2.id] or seg_2.neighbours == [seg_1.id]:
-             # if either segment is very small
-            if m1['size'] < m2['size'] * 0.01 or m2['size'] < m1['size'] * 0.01:
-                return True
-        
-        # voting system
-        
-        # if the diving line is very strait
-#         if m1['straitness'][seg_2.id] < 50:
-#             vote_count += 1
-        
-        # if these segments are similar in color
-        avg_col_diff = np.linalg.norm(m1['avg_color'] - m2['avg_color'])
-        std_col_diff = np.linalg.norm(m1['std_color'] - m2['std_color'])
-        if avg_col_diff < 0.05:# and std_col_diff < 0.05:
-            vote_count += 1
-            
-        # count the votes
-        if vote_count >= vote_thresh: 
-            return True
-        else: 
-            return False
-    #############################
+        if size:
+            # merge segments if one is enclosed by the other and is small
+            if seg_1.neighbours == [seg_2.id] or seg_2.neighbours == [seg_1.id]:
+                if (m1['size'] < m2['size'] * self._merge_size_rel or
+                    m2['size'] < m1['size'] * self._merge_size_rel) and \
+                   (m1['size'] < self._merge_size_cutoff or 
+                    m2['size'] < self._merge_size_cutoff):
+                    return 3 # arbitarily positive
+
+        # KS test the color spectra
+        if col:
+            diff = abs(m1['col_hist'] - m2['col_hist'])
+            diff_max = diff.max(axis=1)
+            sim_confid = sum(diff_max < self._color_sim_thresh)
+            dif_confid = sum(diff_max > self._color_dif_thresh)
+            confidence += sim_confid - dif_confid
+
+        # boundary test
+        if edge:
+            boundary_val = (m1['boundaries_dict'][seg_2.id] +
+                            m2['boundaries_dict'][seg_1.id])/2
+            # average the measure too look at the combined edges
+            exists_confid = (boundary_val > np.array(self._edge_present)).sum()
+            doesnt_confid = (boundary_val < np.array(self._edge_absent)).sum()
+            confidence += doesnt_confid - exists_confid
+
+        return confidence
     
     
     def scan(self):
@@ -123,13 +197,13 @@ class merge_wrapper():
         
         already_scanned = [] # stores fully scanned segments
         
-        for seg_1 in self.segments.values():
-            for neigh_id in seg_1.neighbours: # for every segment pair
+        for seg in self.segments.values():
+            for neigh_id in seg.neighbours: # for every segment pair
                 if neigh_id not in already_scanned:
-                    if self.compare(seg_1, self.segments[neigh_id]):
-                        self.to_merge.append((seg_1.id, neigh_id))
+                    if self.compare(seg, self.segments[neigh_id]) > self._confidence_thresh:
+                        self.to_merge.append((seg.id, neigh_id))
 
-            already_scanned.append(seg_1.id)
+            already_scanned.append(seg.id)
                 
     
     def merge(self):
@@ -162,7 +236,7 @@ class merge_wrapper():
     def iterate(self):
         "The loop to be carried out until the new mesh is made"
         counter = 1
-        while True:
+        while (counter-1) < self._max_passes:
             
             print("Starting Iteration ", counter)
             
@@ -183,14 +257,15 @@ class merge_wrapper():
         
         # validate input
         all_options = ['default', 'compare1', 'compare2', 'both', 'merged',
-                       'original', 'img', 'orig_mask', 'orig_edges',
+                       'original', 'img', 'img_grey', 'orig_mask', 'orig_edges',
                        'merged_mask', 'merged_edges',
-                       'seg_fill', 'seg_edge']
+                       'seg_fill', 'seg_edge', 'confidence']
         assert option in all_options, "option " + option + " not recognised"
         
         # if no axis given create one
         if not ax:
             fig, ax = plt.subplots(figsize=[22, 22])
+        
         
         # plot combined options
         if option == 'default' or option == 'compare1':
@@ -236,16 +311,15 @@ class merge_wrapper():
             self.plot('orig_edges', ax=ax)
             ax.set(title='original segments')
             
-#         elif option == 'vertices':
-#             self.plot('img', ax=ax)
-#             self.plot('merged_edges', ax=ax)
-#             for seg in self.segments.values():
-#                 seg.plot(ax=ax, opt='vertices')
             
         # plot base options
         elif option == 'img':
             ax.imshow(self.img)
             ax.set(title='original image')
+            
+        elif option == 'img_grey':
+            ax.imshow(self.img.mean(axis=2), cmap='gray')
+            ax.set(title='original image greyscaled')
         
         elif option == 'orig_mask':
             ax.imshow(self.orig_mask)
@@ -267,12 +341,34 @@ class merge_wrapper():
             ax.imshow(rgba)
             ax.set(title='original mask outline')
         
+        
+        # kwarg requiered options
         elif option == 'seg_edge' or option == 'seg_fill':
             assert 'seg' in kwargs.keys(),\
                 "must specifiy which segment to plot"
             self.segments[kwargs['seg']].plot(ax=ax, opt=option[4:])
             ax.set(title='segment ' + str(kwargs['seg']))
-        
+            
+        elif option == 'confidence':
+            assert 'sec' in kwargs.keys(),\
+                "must specifiy list of color, edge, size to be used"
+            assert len(kwargs['sec']) == 3,\
+                "must give exactly 3 options"
+            
+            mask = np.zeros_like(self.work_mask)
+            mask[:,:] = np.nan
+            
+            for seg in self.segments.values():
+                for neigh_id in seg.neighbours:
+                    val = self.compare(seg, self.segments[neigh_id], *kwargs['sec'])
+                    Xs, Ys = [*seg.edge_dict[neigh_id].T]
+                    mask[Ys, Xs] = val
+
+            self.plot('img_grey', ax=ax)
+            col = ax.imshow(mask, cmap='RdYlBu')
+            plt.colorbar(col, fraction=0.046/2, pad=0.04)
+            ax.set(title='Confidence on merging using sec='+str(kwargs['sec']))
+            
         
     def rgba(self, mask, color='r', opaqueness=1):
         "Take a 2d mask and return a 4d rgba mask for imshow overlaying"
@@ -307,35 +403,28 @@ class merge_wrapper():
         conv = np.pad(conv, 1, 'edge') # ignore edges
         not_edge = np.isclose(conv, 0)
         return 1. - not_edge
-
-        
-        
 class segment():
     
     def __init__(self, cords, edges, index, wrapper, **kwargs):
+        """
         
+        """
         # store the given params
+        self.id = index
         self.cords = cords
         self.edges = edges
-        self.rgbs = wrapper.img[cords[:, 1], cords[:, 0]]
-        self.id = index
-        self.wrapper = wrapper
-        
-        # find the cordinate range
-        self.x_range = np.array([self.cords[:,0].min(), 
-                                 self.cords[:,0].max() + 1])
-        self.y_range = np.array([self.cords[:,1].min(), 
-                                 self.cords[:,1].max() + 1])
+        self._rgbs = wrapper.img[cords[:, 1], cords[:, 0]]
+        self._wrapper = wrapper
 
         # find which edges are with each segments
-        self.edge_dict = self.identify_edges()
+        self.edge_dict = self._identify_edges()
         self.neighbours = list(self.edge_dict.keys())
         
         # find this segments metrics
-        self.metrics = self.calculate_metrics()
+        self.metrics = self._calculate_metrics()
     
     
-    def identify_edges(self):
+    def _identify_edges(self):
         """
         For every edge use the wrapper mask to find what other segments
         share this edge and store them in a dictionary so that all pixels
@@ -344,12 +433,11 @@ class segment():
         
         # dictionary for neighbour_id:[edge_cordinates]
         edge_dict = {}
-#         vertex_dict = {}
         
         for x, y in self.edges:
-            adj_cords = self.wrapper.neighbours(x, y)
+            adj_cords = self._wrapper.neighbours(x, y)
             # indexs backwards as mask has y, x format
-            adj_segs = self.wrapper.work_mask[adj_cords[:, 1], adj_cords[:, 0]]
+            adj_segs = self._wrapper.work_mask[adj_cords[:, 1], adj_cords[:, 0]]
             unique_segs = np.unique(adj_segs)
             
             # store cordinates that boarder each neighbour appropirately
@@ -359,21 +447,16 @@ class segment():
                     # if neighbour segment already in edge_dict append to it
                     # else create it as a new entry
                     edge_dict.setdefault(int(i),[]).append((x, y))
-                    
-#                     # if this is a vertex store it
-#                     if len(unique_segs) > 2 or len(adj_cords) != 8:
-#                         vertex_dict.setdefault(int(i), []).append((x, y))
                         
         # set every edge entry to an array
         for key, lst in edge_dict.items():
             edge_dict[key] = np.array(lst)
 
-        
         return edge_dict
     
 
     #############################
-    def calculate_metrics(self):
+    def _calculate_metrics(self):
         """
         Calculate the properties of this segment which will be used
         in the merging decision process
@@ -383,51 +466,23 @@ class segment():
         
         mets['size'] = self.cords.shape[0]
         mets['perimeter'] = self.edges.shape[0]
+
+        hists = [np.histogram(self._rgbs[:, i],
+                              bins=self._wrapper._color_nbins,
+                              range=(0.,1.), 
+                              density=True)[0] for i in range(3)]
+        cum_hists = [np.cumsum(h) for h in hists]
+        mets['col_hist'] = np.array([ch/ch[-1] for ch in cum_hists])
         
-        mets['avg_color'] = self.rgbs.mean(axis=0)
-        mets['std_color'] = self.rgbs.std(axis=0)
-        
-#         mets['straitness'] = dict([[i, self.find_straitness(i)]
-#                                     for i in self.neighbours])
-        
+        mets['boundaries_dict'] = {}
+        for n in self.neighbours:
+            Xs, Ys = self.edge_dict[n][:, 0], self.edge_dict[n][:, 1]
+            lst = [self._wrapper.bound_array[Ys, Xs, i].mean()**2
+                   for i in range(4)] ##############################
+            mets['boundaries_dict'][n] = np.mean(lst)
+            
         return mets
-    #############################
-    
-    
-    def find_straitness(self, edge):
-        """
-        Calculate the avg straitness for the given edge. This is defined ....
-        """
-        def line_dist(cords, point_1, point_2):
-            """
-            Finds the shortest distance between cord and a strait line through
-            point_1 and point_2
-            """
-            x0,y0, x1,y1, x2,y2 = *cords, *point_1, *point_2
-            return abs((y2-y1)*x0 - (x2-x1)*y0 + x2*y1 -  y1*x1) / \
-                np.linalg.norm(point_1 - point_2)
-        
-        e_cords = self.edge_dict[edge]
-        n = len(e_cords)
-        
-#         point_1 = e_cords[:5, :].mean(axis=0)
-#         point_2 = e_cords[-5:, :].mean(axis=0)
-
-#         point_1 = e_cords[np.random.randint(0, n, 5)].mean(axis=0)
-#         point_2 = e_cords[np.random.randint(0, n, 5)].mean(axis=0)
-
-        point_1 = e_cords[np.argmin(e_cords[:, 0]), :]
-        point_2 = e_cords[np.argmax(e_cords[:, 0]), :]
-    
-        # cancel if there are 5 or less than points on this edge
-        if len(e_cords) < 20:
-            return np.nan
-        
-        avg_dist = np.mean([line_dist(c, point_1, point_2) 
-                            for c in e_cords])
-        
-        return avg_dist
-        
+    #############################   
     
     
     def plot(self, ax, opt='edge'):
@@ -437,7 +492,7 @@ class segment():
             - 'fill' the entire segment, translucent to see the image beneath
             - 'vertices' the corders of each segement (REMOVED)
         """
-        zeros = np.zeros(self.wrapper.orig_mask.shape)
+        zeros = np.zeros(self._wrapper.orig_mask.shape)
         rgba = np.dstack([zeros, zeros, zeros, zeros])
         
         if opt == 'edge':
@@ -452,21 +507,4 @@ class segment():
             rgba[self.cords[:,1], self.cords[:,0], 2] = blue
             rgba[self.cords[:,1], self.cords[:,0], 3] = 0.6
             ax.imshow(rgba)
-            
-#         elif opt == 'vertices':
-#             for cords in self.vertex_dict.values():
-#                 ax.plot(cords[:, 0], cords[:, 1], 'yo')
                 
-        
-        
-        
-if __name__ == '__main__':
-    
-    # example
-    mask = np.loadtxt('masks/example_mask.txt')
-    img = get_img('images/TX1_white_cropped.tif')
-    wrap = merge_wrapper(img, mask)
-
-    wrap.iterate()
-
-    wrap.plot()
