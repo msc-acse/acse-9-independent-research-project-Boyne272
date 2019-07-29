@@ -55,7 +55,7 @@ class merge_wrapper():
         self._ydim, self._xdim = mask.shape
         
         # create derived arrays
-        self.orig_edges = self.outline(mask)
+        self.orig_edges = self._outline(mask)
         self.work_edges = self.orig_edges.copy()
         self.bound_array = self._edge_detection()
 
@@ -111,16 +111,24 @@ class merge_wrapper():
         return edge_det.astype(float)
 
 
-    def make_segments(self):
-        "create the segment objects from the current working mask"
+    def make_segments(self, seg_ids=[]):
+        """
+        Create the segment objects from the current working mask. If seg_ids
+        is passed then only those segments
+        """
         
         # setup
-        seg_ids = np.unique(self.work_mask)
-        segments = {}
+        segments = {} # holds {int id : obj segment}
+        if len(seg_ids) == 0:
+            seg_ids = np.unique(self.work_mask)
+        else:
+            # if we are updating segements just edit the pre-existsing dict
+            segments = self.segments
         
         # verbose
-        bar = progress_bar(len(seg_ids))
-        print('Initalising segments')
+        N = len(seg_ids)
+        bar = progress_bar(N)
+        print('Initalising %i segments' % N)
         
         for n, i in enumerate(seg_ids):
             bar(n) # update progress bar
@@ -133,7 +141,11 @@ class merge_wrapper():
             bool_arr = bool_arr * self.work_edges # segments edge pixels
             edges = np.array(np.where(bool_arr)[::-1]).T
             
-            segments[i] = (segment(cords, edges, i, self))
+            if len(cords) == 0: # if we are updating a dead segment
+                ########################### fix me Im hideous
+                del segments[i]
+            else:
+                segments[i] = (segment(cords, edges, i, self))
             
         print('\n')
         return segments, seg_ids
@@ -151,48 +163,12 @@ class merge_wrapper():
                              (0 <= y_ < self._ydim))])  # not outside y range
     
     
-    def compare(self, seg_1, seg_2, size=True, edge=True, col=True):
-        """
-        Compare these two segments, and return true if they meet the criteria
-        to merge. Every parameter to merge these can be set as a kwarg when
-        creating this object.
-        """
-        m1, m2 = seg_1.metrics, seg_2.metrics
-        confidence = 0
-        
-        if size:
-            # merge segments if one is enclosed by the other and is small
-            if seg_1.neighbours == [seg_2.id] or seg_2.neighbours == [seg_1.id]:
-                if (m1['size'] < m2['size'] * self._merge_size_rel or
-                    m2['size'] < m1['size'] * self._merge_size_rel) and \
-                   (m1['size'] < self._merge_size_cutoff or 
-                    m2['size'] < self._merge_size_cutoff):
-                    return 3 # arbitarily positive
-
-        # KS test the color spectra
-        if col:
-            diff = abs(m1['col_hist'] - m2['col_hist'])
-            diff_max = diff.max(axis=1)
-            sim_confid = sum(diff_max < self._color_sim_thresh)
-            dif_confid = sum(diff_max > self._color_dif_thresh)
-            confidence += sim_confid - dif_confid
-
-        # boundary test
-        if edge:
-            boundary_val = (m1['boundaries_dict'][seg_2.id] +
-                            m2['boundaries_dict'][seg_1.id])/2
-            # average the measure too look at the combined edges
-            exists_confid = (boundary_val > np.array(self._edge_present)).sum()
-            doesnt_confid = (boundary_val < np.array(self._edge_absent)).sum()
-            confidence += doesnt_confid - exists_confid
-
-        return confidence
-    
-    
     def scan(self):
         """
         Scan over the whole mask and compare every segment pair, being
-        careful to only compare each pair once
+        careful to only compare each pair once. These are stored in the
+        to_merge list so that the order of comparison is not significnt
+        to the specific paring
         """
         
         already_scanned = [] # stores fully scanned segments
@@ -200,7 +176,8 @@ class merge_wrapper():
         for seg in self.segments.values():
             for neigh_id in seg.neighbours: # for every segment pair
                 if neigh_id not in already_scanned:
-                    if self.compare(seg, self.segments[neigh_id]) > self._confidence_thresh:
+                    if (seg.compare(self.segments[neigh_id]) > 
+                        self._confidence_thresh):
                         self.to_merge.append((seg.id, neigh_id))
 
             already_scanned.append(seg.id)
@@ -213,7 +190,7 @@ class merge_wrapper():
         who has merged so that merging with a segment which has already been
         merged is still possible.
         """
-        
+        to_update = []
         for seg_id1, seg_id2 in self.to_merge:
             
             # select the up to date ids
@@ -229,9 +206,14 @@ class merge_wrapper():
                 if val == seg_id2:
                     self.directory[key] = seg_id1
         
+            to_update += [*self.segments[seg_id1].neighbours,
+                          *self.segments[seg_id2].neighbours]
+        
         # clear the merging list
+        to_update = np.unique(to_update)
         self.to_merge = []
-                    
+        return to_update
+        
                     
     def iterate(self):
         "The loop to be carried out until the new mesh is made"
@@ -244,12 +226,12 @@ class merge_wrapper():
             if not self.to_merge: # if to_merge is empty stop
                 print('No segments to merge, terminating\n')
                 break
-            else:
-                print("merging ", len(self.to_merge), " segments\n")
-                self.merge() # merge all nessesary segments
+            print("merging ", len(self.to_merge), " segments\n")
+            to_update = self.merge() # merge all nessesary segments
             
             # recreate the segments to represent the new mask
-            self.segments, self.seg_ids = self.make_segments()
+            print(to_update)
+            self.segments, self.seg_ids = self.make_segments(to_update)
             counter += 1
             
             
@@ -278,7 +260,7 @@ class merge_wrapper():
                    if i not in post_merge_indexs
                    or post_merge_indexs.count(i) > 1]
             NLE_mask = np.isin(self.orig_mask, NLE)
-            NLE_rgba = self.rgba(NLE_mask, opaqueness=.5)
+            NLE_rgba = self._rgba(NLE_mask, opaqueness=.5)
             ax.imshow(NLE_rgba)
             ax.set(title='merging comparison 1')
 
@@ -326,8 +308,8 @@ class merge_wrapper():
             ax.set(title='original mask')
             
         elif option == 'orig_edges':
-            edges = self.outline(self.orig_mask)
-            rgba = self.rgba(edges, color='r')
+            edges = self._outline(self.orig_mask)
+            rgba = self._rgba(edges, color='r')
             ax.imshow(rgba)
             ax.set(title='original mask outline')
             
@@ -336,8 +318,8 @@ class merge_wrapper():
             ax.set(title='current merged mask')
             
         elif option == 'merged_edges':
-            edges = self.outline(self.work_mask)
-            rgba = self.rgba(edges, color='g')
+            edges = self._outline(self.work_mask)
+            rgba = self._rgba(edges, color='g')
             ax.imshow(rgba)
             ax.set(title='original mask outline')
         
@@ -360,7 +342,7 @@ class merge_wrapper():
             
             for seg in self.segments.values():
                 for neigh_id in seg.neighbours:
-                    val = self.compare(seg, self.segments[neigh_id], *kwargs['sec'])
+                    val = seg.compare(self.segments[neigh_id], *kwargs['sec'])
                     Xs, Ys = [*seg.edge_dict[neigh_id].T]
                     mask[Ys, Xs] = val
 
@@ -370,7 +352,7 @@ class merge_wrapper():
             ax.set(title='Confidence on merging using sec='+str(kwargs['sec']))
             
         
-    def rgba(self, mask, color='r', opaqueness=1):
+    def _rgba(self, mask, color='r', opaqueness=1):
         "Take a 2d mask and return a 4d rgba mask for imshow overlaying"
         
         # create the transparent mask
@@ -384,7 +366,7 @@ class merge_wrapper():
         return rgba
     
     
-    def outline(self, mask, opt='full'):
+    def _outline(self, mask, opt='full'):
         """
         Take a 2d mask and use a laplacian convolution to find the segment 
         outlines for plotting. Option decides if all directions are to be
@@ -409,13 +391,16 @@ class segment():
         """
         
         """
-        # store the given params
+        # store the given params and some convinient values
         self.id = index
         self.cords = cords
         self.edges = edges
         self._rgbs = wrapper.img[cords[:, 1], cords[:, 0]]
         self._wrapper = wrapper
 
+        # store this segments group id
+#         self.group = index
+        
         # find which edges are with each segments
         self.edge_dict = self._identify_edges()
         self.neighbours = list(self.edge_dict.keys())
@@ -455,10 +440,9 @@ class segment():
         return edge_dict
     
 
-    #############################
     def _calculate_metrics(self):
         """
-        Calculate the properties of this segment which will be used
+        Calculate various properties of this segment which will be used
         in the merging decision process
         """
         
@@ -478,12 +462,49 @@ class segment():
         for n in self.neighbours:
             Xs, Ys = self.edge_dict[n][:, 0], self.edge_dict[n][:, 1]
             lst = [self._wrapper.bound_array[Ys, Xs, i].mean()**2
-                   for i in range(4)] ##############################
+                   for i in range(4)] # one for each filter direction
             mets['boundaries_dict'][n] = np.mean(lst)
             
         return mets
-    #############################   
+       
     
+    def compare(self, other, size=True, edge=True, col=True):
+        """
+        Compare this and other segments, and return an integer value which is
+        the confidence that they should be merged. Every tuneable parameter
+        used here (stored on the wrapper object) these can be set by passing 
+        the kwarg when creating the wrapper.
+        """
+        m1, m2 = self.metrics, other.metrics
+        confidence = 0
+        
+        # merge segments if one is enclosed by the other and is small (0 or 6)
+        if size:
+            if self.neighbours == [other.id] or other.neighbours == [other.id]:
+                if (m1['size'] < m2['size'] * self._wrapper._merge_size_rel or
+                    m2['size'] < m1['size'] * self._wrapper._merge_size_rel) and \
+                   (m1['size'] < self._wrapper._merge_size_cutoff or 
+                    m2['size'] < self._wrapper._merge_size_cutoff):
+                    return 6 # arbitarily positive
+
+        # KS test the color spectra (-3, 3)
+        if col:
+            diff = abs(m1['col_hist'] - m2['col_hist'])
+            diff_max = diff.max(axis=1)
+            sim_confid = sum(diff_max < self._wrapper._color_sim_thresh)
+            dif_confid = sum(diff_max > self._wrapper._color_dif_thresh)
+            confidence += sim_confid - dif_confid
+
+        # boundary test (-3, 3)
+        if edge:
+            boundary_val = (m1['boundaries_dict'][other.id] +
+                            m2['boundaries_dict'][self.id])/2
+            # average the measure too look at the combined edges
+            exists_confid = (boundary_val > np.array(self._wrapper._edge_present)).sum()
+            doesnt_confid = (boundary_val < np.array(self._wrapper._edge_absent)).sum()
+            confidence += doesnt_confid - exists_confid
+
+        return confidence
     
     def plot(self, ax, opt='edge'):
         """
