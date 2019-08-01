@@ -38,7 +38,7 @@ class Test_basic_heirachical_clustering(unittest.TestCase):
         obj.dist_plot('all')
 
         # check the grouping is as expected
-        assert len(np.unique(obj.deriv_clustering())) == 6, 'clustering not as expected'
+        assert len(np.unique(obj.deriv_clustering(5))) == 6, 'clustering not as expected'
 
         # prevent figure build up
         plt.close('all')
@@ -76,11 +76,14 @@ class Test_basic_heirachical_clustering(unittest.TestCase):
         obj.dist_plot('all')
 
         # check the grouping is as expected
-        assert len(np.unique(obj.deriv_clustering())) == 6, 'clustering not as expected'
+        assert len(np.unique(obj.deriv_clustering())) == 7, 'clustering not as expected'
 
         # prevent figure build up
         plt.close('all')
         
         
 if __name__ == '__main__':
-    unittest.main()
+#     unittest.main()
+    tmp = Test_basic_heirachical_clustering()
+    tmp.test_2d_dummy()
+    tmp.test_higher_dimensions()
