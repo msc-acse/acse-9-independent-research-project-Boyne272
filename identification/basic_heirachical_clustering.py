@@ -19,7 +19,6 @@ class basic_heirachical_clustering():
         self._dists = np.full((self._N, self._N), np.inf)
         for _id in range(self._N):
             self._find_distance(_id)
-        self.dist_std = np.std(np.isfinite(self._dists))
                                
         # option of distance recaulculation
         if join_by == 'max':
@@ -41,7 +40,7 @@ class basic_heirachical_clustering():
         self._dists[_id, :_id] = self._calc_dist(self._vecs[_id],
                                                  self._vecs[:_id])
         
-        # find the distance to every point after this id
+        # find the distance to every pstdoint after this id
         self._dists[_id+1:, _id] = self._calc_dist(self._vecs[_id],
                                                    self._vecs[_id+1:])
         return
@@ -80,16 +79,15 @@ class basic_heirachical_clustering():
         self._dists[id2, :id2] = self._dists[id2:, id2] = np.inf
         
         
-    def iterate(self, iterate=None):
+    def iterate(self):
         
-        if not iterate:
-            iterate = self._group_count
+        iterate = self._group_count-1
         
         bar = progress_bar(iterate) # verbose
         
         for i in range(iterate):
             
-            if self._group_count == 0:
+            if self._group_count == 1:
                 print('\nFully merged graph\n')
                 break
             
@@ -105,7 +103,7 @@ class basic_heirachical_clustering():
             bar(i) # verbose
             
             
-    def deriv_clustering(self, scale=2., plot=True):
+    def deriv_clustering(self, scale=3., plot=True):
         
         directory = dict([(n,n) for n in range(self._N)])
         # { vector id : group id }
@@ -113,7 +111,8 @@ class basic_heirachical_clustering():
         # find the second deriative cutoff
         y = np.array(self.dist_log)
         dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
-        cutoff = (dy2 < (scale * self.dist_std)).sum()
+        std = np.std(dy2)
+        cutoff = (dy2 < (scale * std)).sum() - 1 # dont do the merge that was too far
         
         for i in range(cutoff):
             id1, id2 = self.merge_log[i]
@@ -161,22 +160,22 @@ class basic_heirachical_clustering():
 
         if not ax:
             fig, ax = plt.subplots(figsize=[12, 10])
-        n = 10 if last_few else self._N
+        n = 20 if last_few else self._N
         y = np.array(self.dist_log)
         
         if option == 'dists':
-            x = np.arange(0, self._N)
+            x = np.arange(0, self._N-1)
             ax.plot(x[-n:], y[-n:], '-o')
             ax.set(title='Join Distances')
             
         elif option == '1st':
-            x = np.arange(1, self._N)
+            x = np.arange(1, self._N-1)
             dy = y[1:] - y[:-1] # forward
             ax.plot(x[-n:], dy[-n:], '-o')
             ax.set(title='First Diff')
             
         elif option == '2nd':
-            x = np.arange(1, self._N-1)
+            x = np.arange(1, self._N-2)
             dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
             ax.plot(x[-n:], dy2[-n:], '-o')
             ax.set(title='Second Diff')
@@ -199,17 +198,20 @@ if __name__ == '__main__':
     
     # generate dummy 3d data
     np.random.seed(10)
-    features = np.random.normal(size=[500, 3])
+    features = np.random.normal(size=[500, 2])
     features[50:, :] += 4
     features[100:, :] += 4
     features[150:, 0] += 4
     features[250:300, 1] += 10
     features[350:400, 0] += 10
-    plt.scatter(*features[:, :-1].T)
+    features[-1, -1] += 20
+    
+#     plt.figure(figsize=[10, 10])
+    plt.scatter(*features.T)
     plt.title("dummy data")
 
     obj = basic_heirachical_clustering(features)
     obj.iterate()
     obj.dist_plot('all')
-    obj.deriv_clustering(2, True)
+    obj.deriv_clustering(3, True)
     
