@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tools import progress_bar
 
-class basic_heirachical_clustering():
+class AGNES():
     
     def __init__(self, features, join_by='max'):
         "Cluster by AGNES"
