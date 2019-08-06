@@ -5,6 +5,7 @@ from tools import progress_bar
 class basic_heirachical_clustering():
     
     def __init__(self, features, join_by='max'):
+        "Cluster by AGNES"
         
         # logs which track merges and there distances
         self.dist_log = []
@@ -101,66 +102,73 @@ class basic_heirachical_clustering():
             self._join(id1, id2)
              
             bar(i) # verbose
-            
-            
-    def deriv_clustering(self, scale=3., plot=True):
         
-        directory = dict([(n,n) for n in range(self._N)])
-        # { vector id : group id }
+        print('\n')
+            
+            
+    def cluster_by_derivative(self, std=3., plot=True):
         
         # find the second deriative cutoff
         y = np.array(self.dist_log)
         dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
-        std = np.std(dy2)
-        cutoff = (dy2 < (scale * std)).sum() - 1 # dont do the merge that was too far
+        cutoff = np.std(dy2) * std
         
-        for i in range(cutoff):
-            id1, id2 = self.merge_log[i]
-            for key, val in directory.items():
-                if val == id2:
-                    directory[key] = id1
-        
-        groupings = np.unique(list(directory.values()), return_inverse=True)[1]
-        n = len(np.unique(list(directory.values())))
-        
-        if plot:
-            fig, ax = plt.subplots()
-            ax.scatter(*self._vecs[:, :2].T, c=groupings)
-            ax.set(title= str(n) + ' cluster projection by derivative scale ' 
-                   + str(scale))
+        print('Clustering up to 2nd derivative', cutoff)
+        index = np.argmax(dy2 > cutoff) + 1
+        # argmax gives the first instance,
+        # +1 because dy2 not calculated for first merger 
+        groupings = self.cluster_by_index(index, plot)
         
         return groupings
 
     
-    def dist_clustering(self, cutoff=1.):
+    def cluster_by_index(self, index, plot=True):
+        "Keep merges up to index"
         
+        # this directory tracks what group a vector belongs to
         directory = dict([(n,n) for n in range(self._N)])
         # { vector id : group id }
-        
-        for dist, pair in zip(self.dist_log, self.merge_log):
-            if dist < cutoff:
-                for key, val in directory.items():
-                    if val == pair[1]:
-                        directory[key] = pair[0]
-        
+    
+        n_clusters = self._N - index
+        print('Clustering into', n_clusters, 'segments')
+    
+        # for every merge up to the requiered index
+        for i in range(index):
+            new_group, old_group = self.merge_log[i]
+    
+            # update every vector that had this group
+            for vec_id, group in directory.items():
+                    if group == old_group:
+                        directory[vec_id] = new_group
+                        
+        # rebase the group indexs to start from 1 and be consecutive 
         groupings = np.unique(list(directory.values()), return_inverse=True)[1]
-        n = len(np.unique(list(directory.values())))
-                
+        
         if plot:
-            fig, ax = plt.subplots()
-            ax.scatter(*self._vecs[:, :2].T, c=groupings)
-            ax.set(title= str(n) + ' cluster projection by distance cutoff '
-                   + str(cutoff))
+            fig, ax = plt.subplots(figsize=[12, 8])
+            col = ax.scatter(*self._vecs[:, :2].T, c=groupings)
+            ax.set(title = str(groupings.max()) +
+                   ' Clusters up to Index ' + str(index))
+            plt.colorbar(col)
+            
+        return groupings
+    
+    
+    def cluster_by_distance(self, cutoff_dist=1., plot=True):
+        
+        print('Clustering up to distance', cutoff_dist)
+        index = np.array(self.dist_log < cutoff_dist).sum()
+        groupings = self.cluster_by_index(index, plot)
         
         return groupings
 
     
-    
-    def dist_plot(self, option, ax=None, last_few=True):
+    def cluster_distance_plot(self, option, ax=None, last_few=True):
 
         if not ax:
             fig, ax = plt.subplots(figsize=[12, 10])
-        n = 20 if last_few else self._N
+            
+        n = 25 if last_few else self._N
         y = np.array(self.dist_log)
         
         if option == 'dists':
@@ -184,10 +192,10 @@ class basic_heirachical_clustering():
         elif option == 'all':
             plt.close()
             fig, axs = plt.subplots(2,2, figsize=[15,15])
-            self.dist_plot('dists', ax=axs[0,0])
-            self.dist_plot('dists', ax=axs[0,1], last_few=False)
-            self.dist_plot('1st', ax=axs[1,0])
-            self.dist_plot('2nd', ax=axs[1,1])
+            self.cluster_distance_plot('dists', ax=axs[0,0])
+            self.cluster_distance_plot('dists', ax=axs[0,1], last_few=False)
+            self.cluster_distance_plot('1st', ax=axs[1,0])
+            self.cluster_distance_plot('2nd', ax=axs[1,1])
             
         else:
             plt.close()
@@ -196,22 +204,22 @@ class basic_heirachical_clustering():
             
 if __name__ == '__main__':
     
-    # generate dummy 3d data
+    # generate dummy 2d data
     np.random.seed(10)
     features = np.random.normal(size=[500, 2])
-    features[50:, :] += 4
-    features[100:, :] += 4
-    features[150:, 0] += 4
+    features[50:, :] += 5
+    features[100:, :] += 5
+    features[150:, 0] += 5
     features[250:300, 1] += 10
     features[350:400, 0] += 10
     features[-1, -1] += 20
     
-#     plt.figure(figsize=[10, 10])
+    plt.figure(figsize=[5, 5])
     plt.scatter(*features.T)
     plt.title("dummy data")
 
     obj = basic_heirachical_clustering(features)
     obj.iterate()
-    obj.dist_plot('all')
-    obj.deriv_clustering(3, True)
+    obj.cluster_distance_plot('all')
+    obj.cluster_by_derivative(std=3., plot=True)
     
