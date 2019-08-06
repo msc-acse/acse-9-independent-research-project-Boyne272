@@ -1,8 +1,7 @@
 import unittest
 import numpy as np
 import matplotlib.pyplot as plt
-# from AGNES import AGNES
-from tools import progress_bar
+from AGNES import AGNES
 
 class Test_AGNES(unittest.TestCase):
     
