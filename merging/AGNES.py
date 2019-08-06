@@ -5,7 +5,24 @@ from tools import progress_bar
 class AGNES():
     
     def __init__(self, features, join_by='max'):
-        "Cluster by AGNES"
+        """
+        Clusters the given feature vectors by the AGNES algorithm
+        
+        Parameters
+        ----------
+        features : 2d numpy array
+            The features to cluster by with dimensions (n_samples, n_features).
+            It is advised to input features with normalised distributions
+            as they are not scaled here and this is a distance based clustering
+            algoithm
+            
+        join_by : string (optional)
+            The method by which to recalculate distance to a new group after
+            merging occures. Allowed options are:
+                - 'max' takes the new clusters distance as the maximum of
+                  either of the joined vectors distances
+                - 'min' same as above but with minimum distance
+        """
         
         # logs which track merges and there distances
         self.dist_log = []
@@ -27,15 +44,19 @@ class AGNES():
         elif join_by == 'min':
             self._join = self._join_by_min
         else:
-            raise(ValueError)
+            raise(ValueError) # join_by not recoginsed
     
         
     def _calc_dist(self, vec, vec_array):
-            return np.sqrt(((vec - vec_array)**2).sum(axis=1))
+        """
+        Find the euclidian distance between a single vector (vec) 
+        and multiple vectors (vec_array)
+        """
+        return np.sqrt(((vec - vec_array)**2).sum(axis=1))
 
         
     def _find_distance(self, _id):
-        "Calculte the distance between this vector and all others"
+        "Calculte the distance between this vector and all other vectors"
         
         # find distance to every point before this id
         self._dists[_id, :_id] = self._calc_dist(self._vecs[_id],
@@ -48,6 +69,12 @@ class AGNES():
         
         
     def _join_by_min(self, id1, id2):
+        """
+        Find the new distance from every vector to the group formed by
+        joining id1 and id2. This is taken as the min distance to either of
+        these vectors. id1 stores the new distance and id2 is set to inf
+        so as to not be considered in future min distance calculations.
+        """
         
         # find the minimum of the two distances
         dists_id1 = np.hstack([self._dists[id1, :id1], self._dists[id1:, id1]])
@@ -66,7 +93,13 @@ class AGNES():
     
     
     def _join_by_max(self, id1, id2):
-        
+        """
+        Find the new distance from every vector to the group formed by
+        joining id1 and id2. This is taken as the max distance to either of
+        these vectors. id1 stores the new distance and id2 is set to inf
+        so as to not be considered in future min distance calculations.
+        """
+            
         # find the minimum of the two distances
         dists_id1 = np.hstack([self._dists[id1, :id1], self._dists[id1:, id1]])
         dists_id2 = np.hstack([self._dists[id2, :id2], self._dists[id2:, id2]])
@@ -81,49 +114,65 @@ class AGNES():
         
         
     def iterate(self):
+        """
+        Merge closest pairs until all datapoints are connected. This has to be
+        done before any clustering may occure.
+        """
         
-        iterate = self._group_count-1
-        
+        iterate = self._group_count - 1 # should be n - 1 mergers
         bar = progress_bar(iterate) # verbose
         
         for i in range(iterate):
+            assert self._group_count > 1, 'graph already fully merged'
             
-            if self._group_count == 1:
-                print('\nFully merged graph\n')
-                break
-            
+            # find the two closed groups to merge
             id1, id2 = np.unravel_index(self._dists.argmin(),
                                         self._dists.shape)
             
+            # log this merger
             self.dist_log.append(self._dists[id1, id2])
             self.merge_log.append((id1, id2))
             self._group_count -= 1
             
-            self._join(id1, id2)
+            self._join(id1, id2) # implement merger
              
-            bar(i) # verbose
+            bar(i)  # verbose
+        print('\n') # verbose
+            
+            
+    def cluster_by_derivative(self, n_std=3., plot=True):
+        """
+        Find the grouping by allowing all mergers up to a cutoff, here
+        here determined by a vairation in the second derivative over the given
+        numbers of standard deviation.
         
-        print('\n')
-            
-            
-    def cluster_by_derivative(self, std=3., plot=True):
+        plot bool will plot the grouping projection in 2d.
+        """
         
         # find the second deriative cutoff
         y = np.array(self.dist_log)
         dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
-        cutoff = np.std(dy2) * std
+        cutoff = np.std(dy2) * n_std
         
         print('Clustering up to 2nd derivative', cutoff)
-        index = np.argmax(dy2 > cutoff) + 1
-        # argmax gives the first instance,
-        # +1 because dy2 not calculated for first merger 
+        index = np.argmax(dy2 > cutoff) + 1 + 1
+        # argmax gives the first instance greater than cutoff
+        # +1 because central differencing scheme used, hence the point where
+        # the distance jumps is actually one point further on
+        # +1 again because dy2 not calculated for first merger 
         groupings = self.cluster_by_index(index, plot)
         
         return groupings
 
     
     def cluster_by_index(self, index, plot=True):
-        "Keep merges up to index"
+        """
+        Find the grouping by allowing all mergers up to a given index,
+        There will be N-index clusters where N is the number of samples
+        (-1 from there being N-1 maximum joins is cancled by +1 from indexs
+        starting at 0).
+        Plot will plot the grouping projection in 2d.
+        """
         
         # this directory tracks what group a vector belongs to
         directory = dict([(n,n) for n in range(self._N)])
@@ -144,10 +193,11 @@ class AGNES():
         # rebase the group indexs to start from 1 and be consecutive 
         groupings = np.unique(list(directory.values()), return_inverse=True)[1]
         
+        # plot with color bar if wanted
         if plot:
             fig, ax = plt.subplots(figsize=[12, 8])
             col = ax.scatter(*self._vecs[:, :2].T, c=groupings)
-            ax.set(title = str(groupings.max()) +
+            ax.set(title = str(groupings.max() + 1) +
                    ' Clusters up to Index ' + str(index))
             plt.colorbar(col)
             
@@ -155,7 +205,11 @@ class AGNES():
     
     
     def cluster_by_distance(self, cutoff_dist=1., plot=True):
-        
+        """
+        Find the grouping by allowing all mergers up to a given join distance.
+        Plot will plot the grouping projection in 2d.
+        """
+            
         print('Clustering up to distance', cutoff_dist)
         index = np.array(self.dist_log < cutoff_dist).sum()
         groupings = self.cluster_by_index(index, plot)
@@ -163,14 +217,38 @@ class AGNES():
         return groupings
 
     
-    def cluster_distance_plot(self, option, ax=None, last_few=True):
-
+    def cluster_distance_plot(self, option='all', ax=None, last_few=True):
+        """
+        Plot the option vs iterations on the given axis
+        
+        Parameters
+        ---------
+        option : string (optional)
+            What to plot aginst iteration, choose from:
+            - 'dists' plots the join distance
+            - '1st' plots the numerical first derivative
+            - '2nd'plots the numerical second derivative
+            - 'all' (default) plots plots all of the above 
+                (ignores ax and last few)
+            
+        ax : Matplotlib axis (optional)
+            The axis to plot on, one is created if not given. If 'all' chosen
+            then this setting is ignored
+            
+        last_few : bool (optional)
+            Plot only the last 25 points (or all if less than 25 in total).
+            If 'all' chosen then this setting is ignored
+        """
+        
+        # set axis
         if not ax:
             fig, ax = plt.subplots(figsize=[12, 10])
             
+        # working values
         n = 25 if last_few else self._N
         y = np.array(self.dist_log)
         
+        # base options
         if option == 'dists':
             x = np.arange(0, self._N-1)
             ax.plot(x[-n:], y[-n:], '-o')
@@ -197,9 +275,10 @@ class AGNES():
             self.cluster_distance_plot('1st', ax=axs[1,0])
             self.cluster_distance_plot('2nd', ax=axs[1,1])
             
+        # option not recognised
         else:
             plt.close()
-            print('opt not known')
+            raise(ValueError)
             
             
 if __name__ == '__main__':
@@ -218,8 +297,8 @@ if __name__ == '__main__':
     plt.scatter(*features.T)
     plt.title("dummy data")
 
-    obj = basic_heirachical_clustering(features)
+    obj = AGNES(features)
     obj.iterate()
     obj.cluster_distance_plot('all')
-    obj.cluster_by_derivative(std=3., plot=True)
+    obj.cluster_by_derivative(n_std=3., plot=True)
     
