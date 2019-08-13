@@ -10,6 +10,9 @@ class MSLIC_wrapper():
     Wrapper around SLIC to run multiple instances at once, using a the
     combined of each instance to assign clusters in every iteration
 
+    MSLIC_wrapper(imgs, bin_grid, combo_metric='max', combo_metric_args=[],
+                  dist_metric=None, dist_metric_args=[1.,])
+
     Parameters
     ----------
 
@@ -62,7 +65,7 @@ class MSLIC_wrapper():
                               'sum': lambda t,*args : t.sum(dim=0)}
     
     def __init__(self, imgs, bin_grid, combo_metric='max', combo_metric_args=[],
-                 dist_metric=None, dist_metric_args=[]):
+                 dist_metric=None, dist_metric_args=[1.,]):
         
         # validate all given images
         for img in imgs:
@@ -71,7 +74,7 @@ class MSLIC_wrapper():
         # create the SLIC objects
         self.SLIC_objs = [SLIC(img, bin_grid, dist_metric, dist_metric_args)
                           for img in imgs]
-                            
+        
         self.metric_args = combo_metric_args
         
         if not callable(combo_metric):
@@ -137,6 +140,13 @@ class MSLIC_wrapper():
             
             # print the progress bar
             self._progress_bar(i)
+            
+    
+    def get_segmentation(self):
+        """
+        Returns the current segmentation mask as a numpy array
+        """
+        return self.SLIC_objs[0].get_segmentation()       
     
     
     def plot(self, objs=[], option='default', axs=[None], path=''):
@@ -165,7 +175,7 @@ class MSLIC_wrapper():
         
         # if the time plot is wanted use time plot on this wrapper
         if option == 'time':
-            self.progress_bar.plot_time()
+            self._progress_bar.plot_time()
             return
         
         # if default objs set then replace will list of all indexs
@@ -187,27 +197,26 @@ class MSLIC_wrapper():
             plt.savefig(path)
             
             
-if __name__ == '__main__':
-    # run an example of SLIC on two images, then MSLIC on both
-    from tools import get_img
+# if __name__ == '__main__':
+#     # run an example of SLIC on two images, then MSLIC on both
+#     from tools import get_img
     
-    # setup
-    grid = [40, 40]
-    img_white = get_img("images/TX1_white_cropped.tif")
-    img_polar = get_img("images/TX1_polarised_cropped.tif")
+#     # setup
+#     grid = [40, 40]
+#     img_white = get_img("images/TX1_white_cropped.tif")
+#     img_polar = get_img("images/TX1_polarised_cropped.tif")
     
-    # iterate SLIC with just the white image
-    obj_white = SLIC(img_white, grid)
-    obj_white.iterate(10)
-    obj_white.plot()
+#     # iterate SLIC with just the white image
+#     obj_white = SLIC(img_white, grid)
+#     obj_white.iterate(10)
+#     obj_white.plot()
     
-    # iterate SLIC with just the polar image
-    obj_polar = SLIC(img_polar, grid)
-    obj_polar.iterate(10)
-    obj_polar.plot()
+#     # iterate SLIC with just the polar image
+#     obj_polar = SLIC(img_polar, grid)
+#     obj_polar.iterate(10)
+#     obj_polar.plot()
     
-    # iterate MSLIC with both white and polar images
-    obj_both = MSLIC_wrapper([img_white, img_polar], grid)
-    obj_both.iterate(10)
-    obj_both.plot()
-    
+#     # iterate MSLIC with both white and polar images
+#     obj_both = MSLIC_wrapper([img_white, img_polar], grid)
+#     obj_both.iterate(10)
+#     obj_both.plot()
