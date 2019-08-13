@@ -126,14 +126,16 @@ class SLIC(bin_base):
             clusts are rank 2 tensors with samples on the first axis. This
             should return a rank 2 tensor of distances with shape (clusters, vectors)
             such that taking the argmin along dim=1 gives an array of closest
-            cluster centroids for each vector
+            cluster centroids for each vector.
             
         dist_metric_args : tuple, optional
-            arguments to passed into dist_metric function if given
+            arguments to passed into dist_metric function. By defualt this is
+            a single parameter for the scaling between distance and color
+            space.
             
     """
     
-    def __init__(self, img, bin_grid, dist_metric=None, dist_metric_args=[]):
+    def __init__(self, img, bin_grid, dist_metric=None, dist_metric_args=[1.,]):
         
         # validate inputs
         assert img.ndim == 3, "image must be a 3d array"
@@ -148,17 +150,17 @@ class SLIC(bin_base):
         # bin_base parent which handels the locality of clusters and vectors
         bin_base.__init__(self, bin_grid, self._dim_x, self._dim_y)
         
-        # which bin each vector belongs to
+        # tensor of which bin each vector belongs to
         self._vec_bins = self._bin_vectors(self.vectors)
         
-        # which vectors are in each bin
+        # list of which vectors are in each bin
         self._bins_list = [(self._vec_bins==i).nonzero().squeeze()
                            for i in range(self._Nk)]
         
-        # which cluster each vector belongs to
+        # tensor of which cluster each vector belongs to
         self.vec_clusts = self._vec_bins.clone()
         
-        # which vectors are in each cluster
+        # list of which vectors are in each cluster
         self._cluster_contense = [(self.vec_clusts==i).nonzero().squeeze()
                                    for i in range(self._Nk)]
         
@@ -189,7 +191,7 @@ class SLIC(bin_base):
             col_dist = (col_clust - col_vec[:, None]).norm(dim=2)
             pos_dist = (pos_clust - pos_vec[:, None]).norm(dim=2)
 
-            return col_dist + (pos_dist / np.sqrt(self._Np / self._Nk))
+            return col_dist + (args[0] * pos_dist / np.sqrt(self._Np / self._Nk))
         
         # use the dist_metric if given
         self.dist_func = dist_metric if dist_metric else dist
@@ -346,7 +348,7 @@ class SLIC(bin_base):
         if ax == None:
             fig, ax = plt.subplots(figsize=[15, 15])
             
-        # every plot option    
+        # plot options  
         if option == 'default':
             self.plot('img', ax)
             self.plot('edges', ax)
@@ -434,24 +436,24 @@ class SLIC(bin_base):
         return (edges > 0).astype(float) # any non-zero is an edge
     
             
-# if __name__ == '__main__':
-#     # run an example
-#     from tools import get_img
+if __name__ == '__main__':
+    # run an example
+    from tools import get_img
     
-#     # setup
-#     img = get_img("images/TX1_white_cropped.tif")
-#     obj = SLIC(img, [20,15])
+    # setup
+    img = get_img("images/TX1_white_cropped.tif")
+    obj = SLIC(img, [20,15])
 
-#     # plot the initial binning 
-#     obj.plot("setup")
-#     plt.gca().set(title='Initial Grid')
+    # plot the initial binning 
+    obj.plot("setup")
+    plt.gca().set(title='Initial Grid')
     
-#     # iterate
-#     obj.iterate(10)
+    # iterate
+    obj.iterate(10)
     
-#     # plot the resulting segmentation
-#     obj.plot('default')
-#     plt.gca().set(title='Segmentation after 10 Iterations')
+    # plot the resulting segmentation
+    obj.plot('default')
+    plt.gca().set(title='Segmentation after 10 Iterations')
     
-#     # plot the time taken
-#     obj.plot('time')
+    # plot the time taken
+    obj.plot('time')
