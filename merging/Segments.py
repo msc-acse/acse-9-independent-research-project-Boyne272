@@ -205,8 +205,8 @@ class segment_group(Mask_utilities):
                     self._directory[key] = id1
                     
             # track which segments to recalculate
-            to_check.update([*self.seg_dict[id1].neighbours, 
-                             *self.seg_dict[id2].neighbours])
+            to_check.update(self.seg_dict[id1].neighbours + 
+                            self.seg_dict[id2].neighbours)
         
         
         # stores which segments exist but need recalculating
