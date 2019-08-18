@@ -211,7 +211,7 @@ class AGNES():
         """
             
         print('Clustering up to distance', cutoff_dist)
-        index = np.array(self.dist_log < cutoff_dist).sum()
+        index = np.array([d < cutoff_dist for d in self.dist_log]).sum()
         groupings = self.cluster_by_index(index, plot)
         
         return groupings

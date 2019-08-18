@@ -93,11 +93,11 @@ class Mask_utilities():
         return 1. - zero_grad
     
     
-    def _enforce_connectivity(self):
+    def _enforce_connectivity(self, mask):
         """
-        Partition the stored mask so that no section disjoint
+        Partition the given mask so that no section is disjoint
         """
-        return morphology.label(self.mask, neighbors=8)
+        return morphology.label(mask, neighbors=8)
         
 
 # -----------------------------------------------------------------------------
@@ -124,14 +124,14 @@ class segment_group(Mask_utilities):
     
     def __init__(self, mask):
         
+        # ensure the given mask is fully connected
+        mask = self._enforce_connectivity(mask)
+        
         # parent validates input and creates the mask, orig_mask attributes
         Mask_utilities.__init__(self, mask)
-        
-        # ensure the given mask is fully connected
-        self.mask = self._enforce_connectivity()
     
         # create the segment objects and the directory which tracks merges
-        self.seg_dict = self._create_segments(np.unique(self.orig_mask))
+        self.seg_dict = self._create_segments(np.unique(self.mask))
         self._directory = dict([(n, n) for n in self.seg_dict.keys()])
         
         # store the group of each segment
@@ -417,13 +417,28 @@ class segment_group(Mask_utilities):
         # set the new clusters
         for seg_id, cluster in zip(self.seg_dict.keys(), clusters):
             self.seg_clusters[seg_id] = cluster
+            
+            
+    def get_cluster_mask(self):
+        """
+        Returns a 2d mask of pixels clusters
+        """
+        
+        output = np.full_like(self.mask, np.nan)
+        for seg_id, clust in self.seg_clusters.items():
+            output[self.mask == seg_id] = clust
+            
+        return output
         
         
     def plot(self, option='default', ax=None, **kwargs):
         """
         Plot the specified option on the axis if given. All of these are
-        designed to be plotted over the original image (hence why an axis
-        option is given). Valid options are:
+        designed to be plotted over the original image, either by passing axis
+        with this image already on it or by passing the image array as kwarg
+        'back_img'.
+        
+        Valid options are:
         
         - 'both' or 'default'
             shows the merged segments edges and the original segment edges in a
@@ -438,6 +453,10 @@ class segment_group(Mask_utilities):
         - 'cluster'
             plots a mask that is transparent only where segments belong to the
             cluster specified by the kwarg 'cluster'.
+            
+        - 'cluster_all'
+            plots every cluster as above on a multi axis figure. Must give
+            back_img kwarg so that it can be put on each subplot.
             
         - 'segment' 
             plots a mask that shades in the segment id given with the kwarg
@@ -458,16 +477,20 @@ class segment_group(Mask_utilities):
         # if no axis given create one
         if not ax:
             fig, ax = plt.subplots(figsize=[15, 15])
+            
+        # plot background image if given
+        if 'back_img' in kwargs.keys():
+            ax.imshow(kwargs['back_img'])
         
         # base options
         if option == 'orig_edges':
             outline = self._outline(original=True)
-            ax.imshow(self._rgba(outline), color='r')
+            ax.imshow(self._rgba(outline, color='r'))
             ax.set(title='original mask outline')
             
         elif option == 'merged_edges':
             outline = self._outline(original=False)
-            ax.imshow(self._rgba(outline), color='g')
+            ax.imshow(self._rgba(outline, color='g'))
             ax.set(title='original mask outline')
             
         # composite option
@@ -484,9 +507,9 @@ class segment_group(Mask_utilities):
             assert kwargs['cluster'] in self.seg_clusters.values(), \
                 'cluster must exist'
                 
-            # make an opaque mask
+            # make an translucent mask
             rgba = np.zeros([self._ydim, self._xdim, 4])
-            rgba[:, :, 3] = 1.
+            rgba[:, :, 3] = .75
             
             # for every segment in this cluster make the mask transparent
             for seg in self.seg_dict.values():
@@ -495,6 +518,27 @@ class segment_group(Mask_utilities):
             
             ax.imshow(rgba)
             ax.set(title='Cluster ' + str(kwargs['cluster']))
+            
+        elif option == 'cluster_all':
+            
+            # validate the background image is present
+            assert 'back_img' in kwargs.keys(), 'must give the background image'
+            
+            # setup figure
+            plt.close()
+            clusts = set(list(self.seg_clusters.values()))
+            n = int((1 + len(clusts)) / 2)
+            fig, axs = plt.subplots(n, 2, figsize=[20, n*10])
+            
+            # plot each cluster
+            for ax, clust in zip(axs.ravel()[:len(clusts)], clusts):
+                self.plot('cluster', cluster=clust,
+                          back_img=kwargs['back_img'], ax=ax)
+                
+            # delete unused plots
+            for ax in axs.ravel()[len(clusts):]:
+                fig.delaxes(ax)
+            plt.draw()
 
         # single segment plot
         elif option == 'segment':
@@ -543,7 +587,7 @@ class segment_group(Mask_utilities):
         else:
             print('option not recognised, allowed options are:')
             for s in ('orig_edges', 'merged_edges', 'both', 'cluster',
-                      'segment', 'segment_edge', 'edge_conf'): 
+                      'cluster_all', 'segment', 'segment_edge', 'edge_conf'): 
                 print('\t-' + s)
                 
 
