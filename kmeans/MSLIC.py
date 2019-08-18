@@ -198,7 +198,7 @@ class MSLIC_wrapper():
             plt.savefig(path)
             
             
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # run an example of SLIC on two images, then MSLIC on both
     from tools import get_img
     
