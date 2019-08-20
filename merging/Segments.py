@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import convolve2d
 from skimage import morphology
@@ -14,13 +13,19 @@ class Mask_utilities():
     A collection of utilities for minipulating a mask, such as getting its
     outline or creating an rgba array for plotting
     
-    Mask_utilities(mask)
+    
+    Mask_utilities(mask, connected=True)
+    
     
     Parameters
     ----------
     
     mask : 2d numpy array
         integer array to be used 
+        
+    connected : bool, optional
+        if true will enforce connectivity of each region in the mask
+        via skimgs morphology package. Defaults to true.
     """
     
     # laplacian array
@@ -31,11 +36,15 @@ class Mask_utilities():
                             [1., -4., 1.],
                             [0., 1., 0.]])
     
-    def __init__(self, mask):
+    def __init__(self, mask, connected=True):
         
         # validate input
         assert mask.ndim == 2, 'Must be a 2d mask'
         assert mask.dtype == np.int64, 'Must be an integer array'
+        
+        # enforce connectivity if wanted
+        if connected:
+            mask = self._enforce_connectivity(mask)
         
         # store the original mask for refrence
         self.orig_mask = mask.copy()
@@ -125,21 +134,20 @@ class segment_group(Mask_utilities):
     
     def __init__(self, mask):
         
-        # ensure the given mask is fully connected
-        mask = self._enforce_connectivity(mask)
-        
         # parent validates input and creates the mask, orig_mask attributes
-        Mask_utilities.__init__(self, mask)
+        Mask_utilities.__init__(self, mask, True)
+    
+        print(len(np.unique(self.mask)))
     
         # create the segment objects and the directory which tracks merges
-        self.seg_dict = self._create_segments(np.unique(self.mask))
+        self.seg_dict = self._create_segments(np.unique(self.mask), {})
         self._directory = dict([(n, n) for n in self.seg_dict.keys()])
         
         # store the group of each segment
         self.seg_clusters = {}
 
     
-    def _create_segments(self, seg_ids, segments={}):
+    def _create_segments(self, seg_ids, segs):
         """
         Initalise the segment objects from the list of ids is passed with the
         current mask. When updating then only pass segments to be recreated
@@ -168,12 +176,12 @@ class segment_group(Mask_utilities):
             edges = np.array(np.where(bool_arr)[::-1]).T
             
             # create the segments
-            segments[i] = (segment(cords, edges, i, self))
+            segs[i] = (segment(cords, edges, i, self))
             
         # leave a space after the progress bar
         print('\n')
         
-        return segments
+        return segs
     
         
     def _merge_segments(self, to_merge):
@@ -422,10 +430,12 @@ class segment_group(Mask_utilities):
             
     def get_cluster_mask(self):
         """
-        Returns a 2d mask of pixels clusters
+        Returns a mask of the cluster of each segment
         """
-        
+        # create output mask
         output = np.full_like(self.mask, np.nan)
+        
+        # loop of segments to fill it
         for seg_id, clust in self.seg_clusters.items():
             output[self.mask == seg_id] = clust
             
@@ -745,6 +755,24 @@ class segment():
             
 # -----------------------------------------------------------------------------
 
-# if __name__ == '__main__':
-#     implement me
+if __name__ == '__main__':
+
+    # Create a regular dummy mask
+    example_mask = np.arange(100).reshape([10,10]).repeat(10, axis=0).repeat(10, axis=1)
+    example_mask[12,12] = 25 # add an iregular center
+    example_mask[12,17] = 25 # add an iregular center
+    
+    # create the segment object
+    example_obj = segment_group(example_mask)
+    
+    # define a clustering for every segment after 35
+    clust = np.arange(102)
+    clust[35:] = 36
+    
+    # assign this clustering and implement the merging
+    example_obj.assign_clusters(clust)
+    example_obj.merge_by_cluster()
+    
+    # plot the outcome (lower side of the image is a single cluster)
+    example_obj.plot(back_img=example_mask)
             
