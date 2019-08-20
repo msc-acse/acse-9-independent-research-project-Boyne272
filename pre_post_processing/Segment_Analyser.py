@@ -6,9 +6,9 @@ from tools import progress_bar
 
 class Segment_Analyser():
     """
-    Takes in a segmentation and its clustering and get the user to label
+    Takes in a segmentation and its clustering. Gets user inputs to label
     each cluster. Then the appropirate distriubtions of the labelled clusters
-    can be calculated.
+    are calculated.
     
     
     Segment_Analyser(img, mask, clusters)
@@ -17,13 +17,15 @@ class Segment_Analyser():
     Parameters
     ----------
     
-    img
+    img : 2d or 3d numpy array
+        An rgb, rgba, or grey scale array of the image. Used for visulisation
+        only 
     
+    mask : 2d numpy array
+        Segmentation mask for analysing distibuions
     
-    mask
-    
-    
-    clusters
+    clusters : 2d numpy array
+        Clustering mask for identifying different materials
     
     """
     
@@ -36,7 +38,6 @@ class Segment_Analyser():
         
         # dictionary stores clusters labels
         self.labels = dict([(str(c), c) for c in np.unique(clusters)])
-#         self.set_labels()
         
         
     def set_labels(self):
@@ -78,7 +79,7 @@ class Segment_Analyser():
         self.labels = label_dict
         
         
-    def plot_custer(self, label, ax=None):
+    def plot_cluster(self, label, ax=None):
         """
         Plot the original image and mask all but the cluster with the
         given label. Plots on ax if given.
@@ -92,15 +93,22 @@ class Segment_Analyser():
         ax.imshow(self.img)
         
         # create a plot the cluster mask
-        overlay = np.full_like(self.mask, 0.5, dtype='float')
-        overlay[self.clusters == self.labels[label]] = np.NaN
+        overlay = np.zeros([*self.mask.shape, 4])
+        overlay[:, :, 3] = .75
+        
+        overlay[:, :, 3][self.clusters == self.labels[label]] = 0.
         ax.imshow(overlay, cmap='binary')
+        
+        ax.set(title='Cluster ' + label)
+        ax.axis('off')
         
         
     def plot_clusters(self, alpha=.4, ax=None):
         """
         Plot the original image and highlight each different cluster with a
-        random colored shade. Plots on ax if given.
+        random colored shade. Note this can often be very hard to see over
+        the colors of the original image, it is often better to plot each
+        seperately using plot_cluster. Plots on ax if given.
         """
               
         # create an axis if not given
@@ -129,9 +137,18 @@ class Segment_Analyser():
             rgba[:, :, 3][bool_arr] = alpha
         
         ax.imshow(rgba)
+        ax.set(title='Highlighted Clusters')
+        ax.axis('off')
         
         
     def get_composition(self, return_arr=False):
+        """
+        Plots a bar graph of fractional composition for each label.
+        
+        These vaues are also printed in a table.
+        
+        If return_arr is true then a 1d relative compositions array is returned.
+        """
         
         # calculate the sizes of each cluster 
         fracs = [(self.clusters == clust).mean()
@@ -155,6 +172,13 @@ class Segment_Analyser():
         
         
     def get_grain_count(self, return_arr=False):
+        """
+        Plots the number of segments in each cluster on a bar graph.
+        
+        These vaues are also printed in a table.
+        
+        If return_arr is true then a 1d grain count array is returned.
+        """
         
         # count the number of segments in each cluster
         n_grains = []
@@ -173,13 +197,21 @@ class Segment_Analyser():
         # print values in a table
         print('Tabel of Grain Count')
         for l, n in zip(labs, n_grains):
-            print(n, '%\t', l)    
+            print(n, '\t', l)    
         
         if return_arr:
             return n_grains
     
 
     def get_gsd(self, label, return_arr=False):
+        """
+        Plots the distribution of segment areas, perimeters and the ratio of
+        the two (i.e. the grain size distribution) of the cluster with the 
+        given label.
+        
+        If return_arr is true then a 2d array array is returned with 
+        (size, perimeter, ratio) on the first axis and segment on the second.
+        """
         
         # identify segments in this cluster
         clust = self.labels[label]
@@ -201,18 +233,29 @@ class Segment_Analyser():
             ratios[i] = sizes[i] / perimeters[i]
             
         # plot histograms
-        for arr, title in zip([sizes, perimeters, ratios],
-                              ['sizes', 'perimeters', 'ratios']):
-            plt.figure()
-            plt.hist(arr)
-            plt.gca().set(title = label + ' ' + title + ' dist',
-                          xlabel='Pixels', ylabel='Count')
+        fig, axs = plt.subplots(2, 2, figsize=[16, 16])
+        for arr, title, ax in zip([sizes, perimeters, ratios],
+                                  ['sizes', 'perimeters', 'ratios'],
+                                  axs.ravel()[:3]):
+            ax.hist(arr)
+            ax.set(title = label + ' ' + title + ' dist',
+                   xlabel='Pixels', ylabel='Count')
 
+        # delete the unused figure
+        fig.delaxes(axs.ravel()[3])
+            
         if return_arr:
             return np.vstack([sizes, perimeters, ratios]) 
         
         
     def get_span(self, label, return_arr=False):
+        """
+        Plot the span distribtuion of cluster with the given label where
+        span is defined as the longest distance between two points in the
+        segment.
+        
+        If return_arr is true then a 1d segment span array is returned.
+        """
         
         # identify segments in this cluster
         clust = self.labels[label]
@@ -227,7 +270,8 @@ class Segment_Analyser():
         for i, seg in enumerate(segs):
             bar(i)
             bool_arr = self.mask == seg
-            edges = self._get_edges(bool_arr) * bool_arr
+            edge_arr = self._get_edges(bool_arr) * bool_arr
+            edges = np.vstack(np.where(edge_arr)).T
             spans[i] = pdist(edges).max()
         
         # plot the histogram
@@ -242,7 +286,7 @@ class Segment_Analyser():
     def _get_edges(self, mask):
         """
         Take the mask and use a laplacian convolution to find the outlines.
-        (same as ouline on segment_group)
+        (same as segment_group._ouline)
         """
         # do the convolution to find the edges
         lap = np.array([[1., 1., 1.],
@@ -255,3 +299,36 @@ class Segment_Analyser():
         
         # return where there is not zero gradient
         return 1. - np.isclose(conv, 0)
+
+    
+if __name__ == '__main__':
+    
+    # create a dummy mask
+    mask_upper = np.array([[0,0,0,0],
+                           [1,1,2,2],
+                           [3,3,4,5],
+                           [6,7,8,9]]).repeat(5, axis=0).repeat(10, axis=1)
+    mask_lower = np.array([[10,11],
+                           [12,13]]).repeat(10, axis=0).repeat(20, axis=1)
+    mask = np.vstack((mask_upper, mask_lower))
+
+    # create a dummy clustering
+    cluster = np.zeros_like(mask)
+    cluster[20:, :] = 1
+
+    # create the analysis object
+    example_obj = Segment_Analyser(mask, mask, cluster)
+    # example_obj.set_labels() # prompt the user to set the labels
+    example_obj.labels = {'upper':0, 'lower':1} # set the labels manually 
+
+    # plot the generated segments and clusters
+    example_obj.plot_cluster('upper')
+    example_obj.plot_cluster('lower')
+
+    # # observe the different properties
+    example_obj.get_composition()
+    example_obj.get_grain_count()
+    example_obj.get_span('upper')
+    example_obj.get_gsd('upper')
+    example_obj.get_span('lower')
+    example_obj.get_gsd('lower')
