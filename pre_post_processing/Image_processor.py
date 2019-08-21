@@ -248,7 +248,8 @@ class Image_processor():
         
     def hog(self, key='curr'):
         "Apply histogram of gradients to either single or multi-channel images"
-        self.imgs[key] = ski.feature.hog(self.imgs['curr'], visualize=True)[1]
+        self.imgs[key] = ski.feature.hog(self.imgs['curr'], visualize=True,
+                                         block_norm='L1')[1]
         return self.imgs[key]
     
     
