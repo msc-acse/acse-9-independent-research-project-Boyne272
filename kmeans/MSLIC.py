@@ -75,14 +75,18 @@ class MSLIC_wrapper():
         self.SLIC_objs = [SLIC(img, bin_grid, dist_metric, dist_metric_args)
                           for img in imgs]
         
+        # store combo metric arguments
         self.metric_args = combo_metric_args
         
-        if not callable(combo_metric):
+        # set the given combo_metric if given
+        if callable(combo_metric):
+            self.metric = combo_metric
+        else:
+            # check the sting matches one of the defualts
             assert combo_metric in self._default_combo_metrics.keys(), \
                 "metric " + combo_metric + " not recognised"
+            # set to the default combo metric
             self.metric = self._default_combo_metrics[combo_metric]
-        else:
-            self.metric = combo_metric
                 
     
     def _combined_distance(self):
@@ -203,21 +207,21 @@ if __name__ == '__main__':
     from tools import get_img
     
     # setup
-    grid = [40, 40]
-    img_white = get_img("images/TX1_white_cropped.tif")
-    img_polar = get_img("images/TX1_polarised_cropped.tif")
+    grid = [20, 20]
+    img_white = get_img("images/example_white.tif")
+    img_polar = get_img("images/example_polar.tif")
     
     # iterate SLIC with just the white image
     obj_white = SLIC(img_white, grid)
-    obj_white.iterate(10)
+    obj_white.iterate(5)
     obj_white.plot()
     
     # iterate SLIC with just the polar image
     obj_polar = SLIC(img_polar, grid)
-    obj_polar.iterate(10)
+    obj_polar.iterate(5)
     obj_polar.plot()
     
     # iterate MSLIC with both white and polar images
     obj_both = MSLIC_wrapper([img_white, img_polar], grid)
-    obj_both.iterate(10)
+    obj_both.iterate(5)
     obj_both.plot()
