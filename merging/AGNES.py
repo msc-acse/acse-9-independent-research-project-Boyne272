@@ -255,19 +255,22 @@ class AGNES():
         if option == 'dists':
             x = np.arange(0, self._N-1)
             ax.plot(x[-n:], y[-n:], '-o')
-            ax.set(title='Join Distances')
+            ax.set(title='Join Distances', xlabel='Iteration',
+                   ylabel='Distance')
             
         elif option == '1st':
             x = np.arange(1, self._N-1)
             dy = y[1:] - y[:-1] # forward
             ax.plot(x[-n:], dy[-n:], '-o')
-            ax.set(title='First Diff')
+            ax.set(title='First Diff', xlabel='Iteration',
+                   ylabel='Distance 1st Derivative')
             
         elif option == '2nd':
             x = np.arange(1, self._N-2)
             dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
             ax.plot(x[-n:], dy2[-n:], '-o')
-            ax.set(title='Second Diff')
+            ax.set(title='Second Diff', xlabel='Iteration',
+                   ylabel='Distance 2nd Derivative')
             
         # composit option
         elif option == 'all':
@@ -296,10 +299,12 @@ if __name__ == '__main__':
     features[350:400, 0] += 10
     features[-1, -1] += 20
     
+    # plot the dummy data
     plt.figure(figsize=[5, 5])
     plt.scatter(*features.T)
     plt.title("dummy data")
 
+    # cluster it and plot the clusters
     obj = AGNES(features)
     obj.iterate()
     obj.cluster_distance_plot('all')

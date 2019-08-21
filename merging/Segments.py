@@ -138,8 +138,6 @@ class segment_group(Mask_utilities):
         # parent validates input and creates the mask, orig_mask attributes
         Mask_utilities.__init__(self, mask, True)
     
-        print(len(np.unique(self.mask)))
-    
         # create the segment objects and the directory which tracks merges
         self.seg_dict = self._create_segments(np.unique(self.mask), {})
         self._directory = dict([(n, n) for n in self.seg_dict.keys()])
