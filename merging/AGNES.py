@@ -1,28 +1,35 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tools import progress_bar
+import scipy.linalg as la
+
 
 class AGNES():
-    
+    """
+    Clusters the given feature vectors by the AGNES algorithm
+
+
+    AGNES(features, join_by='max')
+
+
+    Parameters
+    ----------
+    features : 2d numpy array
+        The features to cluster by with dimensions (n_samples, n_features).
+        It is advised to input features with normalised distributions
+        as they are not scaled here and this is a distance based clustering
+        algoithm
+
+    join_by : string (optional)
+        The method by which to recalculate distance to a new group after
+        merging occures. Allowed options are:
+            - 'max' takes the new clusters distance as the maximum of
+              either of the joined vectors distances
+            - 'min' same as above but with minimum distance
+    """
+
+
     def __init__(self, features, join_by='max'):
-        """
-        Clusters the given feature vectors by the AGNES algorithm
-        
-        Parameters
-        ----------
-        features : 2d numpy array
-            The features to cluster by with dimensions (n_samples, n_features).
-            It is advised to input features with normalised distributions
-            as they are not scaled here and this is a distance based clustering
-            algoithm
-            
-        join_by : string (optional)
-            The method by which to recalculate distance to a new group after
-            merging occures. Allowed options are:
-                - 'max' takes the new clusters distance as the maximum of
-                  either of the joined vectors distances
-                - 'min' same as above but with minimum distance
-        """
         
         # logs which track merges and there distances
         self.dist_log = []
@@ -45,26 +52,18 @@ class AGNES():
             self._join = self._join_by_min
         else:
             raise(ValueError) # join_by not recoginsed
-    
-        
-    def _calc_dist(self, vec, vec_array):
-        """
-        Find the euclidian distance between a single vector (vec) 
-        and multiple vectors (vec_array)
-        """
-        return np.sqrt(((vec - vec_array)**2).sum(axis=1))
 
         
     def _find_distance(self, _id):
         "Calculte the distance between this vector and all other vectors"
         
         # find distance to every point before this id
-        self._dists[_id, :_id] = self._calc_dist(self._vecs[_id],
-                                                 self._vecs[:_id])
+        self._dists[_id, :_id] = la.norm(self._vecs[_id] - self._vecs[:_id],
+                                         axis=1)
         
         # find the distance to every pstdoint after this id
-        self._dists[_id+1:, _id] = self._calc_dist(self._vecs[_id],
-                                                   self._vecs[_id+1:])
+        self._dists[_id+1:, _id] = la.norm(self._vecs[_id] - self._vecs[_id+1:],
+                                         axis=1)
         return
         
         
@@ -154,12 +153,16 @@ class AGNES():
         dy2 = y[:-2] - 2*y[1:-1] + y[2:] # central
         cutoff = np.std(dy2) * n_std
         
-        print('Clustering up to 2nd derivative', cutoff)
         index = np.argmax(dy2 > cutoff) + 1 + 1
         # argmax gives the first instance greater than cutoff
         # +1 because central differencing scheme used, hence the point where
         # the distance jumps is actually one point further on
         # +1 again because dy2 not calculated for first merger 
+        
+        # verbose
+        print('Clustering up to 2nd derivative', cutoff,
+              ' distance ', y[index])
+        
         groupings = self.cluster_by_index(index, plot)
         
         return groupings
