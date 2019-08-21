@@ -43,10 +43,12 @@ class Test_Segment_Analyser(unittest.TestCase):
         # observe the different properties
         properties = [example_obj.get_composition(return_arr=True),
                       example_obj.get_grain_count(return_arr=True),
-                      example_obj.get_span('upper', return_arr=True),
-                      example_obj.get_gsd('upper', return_arr=True),
-                      example_obj.get_span('lower', return_arr=True),
-                      example_obj.get_gsd('lower', return_arr=True)]
+                      example_obj._get_span('upper', return_arr=True),
+                      example_obj.get_gsd('upper', return_arr=True,
+                                          span=False),
+                      example_obj._get_span('lower', return_arr=True),
+                      example_obj.get_gsd('lower', return_arr=True,
+                                          span=False)]
         
         # close the many figures just opened
         plt.close('all')

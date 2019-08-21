@@ -107,6 +107,7 @@ class Test_Image_processor(unittest.TestCase):
         obj_grey.reset(), obj_grey.lbp()
         obj_grey.reset(), obj_grey.canny()
         obj_grey.reset(), obj_grey.prewitt()
+        obj_grey.reset(), obj_grey.threshold(.5)
         obj_grey.reset(), obj_grey.hog()
 
         

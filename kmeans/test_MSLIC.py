@@ -13,7 +13,11 @@ from tools import set_seed, get_img
 
 
 class Test_MSLIC_wrapper(unittest.TestCase):
-
+    """
+    Tests for the MSLIC class. Note these are all unit tests as this is doing
+    nothing new over the SLIC class (except for the distance combination
+    which is tested below) hence results based tests are not needed
+    """
     
     def test_distance_combination(self):
         """
@@ -22,8 +26,8 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         """
         # setup
         set_seed(10)
-        img_w = get_img("images/TX1_white_cropped.tif")
-        img_p = get_img("images/TX1_polarised_cropped.tif")
+        img_w = get_img("images/example_white.tif")
+        img_p = get_img("images/example_polar.tif")
         obj = MSLIC_wrapper((img_w, img_p), [4,4])
         
         # find the combined distance
@@ -137,38 +141,6 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         # check that plotting a just one instance also works
         obj.plot([0], 'default')
         obj.plot([1], 'default')
-        
-        
-#     def test_result(self):
-#         """
-#         acceptance test that the outcome is as expected for a simple image by
-#         checking a handful of manually identified points are seperated by the
-#         algorithm
-#         """
-#         # setup and iterate
-#         set_seed(10)
-#         img_w = get_img("images/example_white.tif")
-#         img_p = get_img("images/example_polar.tif")
-#         obj = MSLIC_wrapper((img_w, img_p), [4,4])
-#         obj.iterate(5)
-        
-#         # extract mask
-#         mask = obj.get_segmentation()
-        
-#         # define known points
-#         known_points = [[10, 10],
-#                         [300, 10],
-#                         [10, 500],
-#                         [10, 400],
-#                         [850, 200],
-#                         [850, 100]]
-        
-#         # for each pair check they are in different segments
-#         for x1, y1 in known_points:
-#             for x2, y2 in known_points:
-#                 if x1 != x2 and y1 != y2:
-#                     assert mask[y1, x1] != mask[y2, x2], \
-#                         "Mask does not agree with expected"
 
     
 if __name__ == '__main__':
@@ -178,7 +150,7 @@ if __name__ == '__main__':
     test_obj.test_distance_combination()
     test_obj.test_assignment_to_SLIC()
     test_obj.test_plot()
-#     test_obj.test_result()
+    print('\n all tests passed')
     
 #     # unittest.main does not work in google colab, but should work elsewhere
 #     unittest.main()

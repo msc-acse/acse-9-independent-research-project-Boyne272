@@ -336,7 +336,7 @@ class SLIC(bin_base):
             - 'centers' each kmean centroid
             - 'bin_edges' the bin mesh used
             - 'bins' both 'img' and 'bin_edges'
-            - 'time' the iterations vs time if iterate was called
+            - 'time' the iterations vs time
             
         If path is given the image will be saved on that path.
         
@@ -398,8 +398,10 @@ class SLIC(bin_base):
             ax.set(title='Image Segmentation (bins)')
             
         elif option == 'time':
-            assert hasattr(self, '_progress_bar'), 'must call iterate to use this'
-            self._progress_bar.plot_time(ax)
+            assert hasattr(self, '_progress_bar'), \
+                'must call iterate to use this'
+            plt.close()
+            self._progress_bar.plot_time()
             ax.set(title='Image Segmentation (time)')
     
     

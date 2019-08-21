@@ -52,7 +52,7 @@ class Segment_Analyser():
         for label, clust in self.labels.items():
             
             # plot this cluster
-            self.plot_custer(label)
+            self.plot_cluster(label)
             plt.show()
             
             # get user input
@@ -92,53 +92,63 @@ class Segment_Analyser():
         # plot the original image
         ax.imshow(self.img)
         
-        # create a plot the cluster mask
+        # mask all pixels translucently except for this clusters pixels
         overlay = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
         overlay[:, :, 3] = .75
-        
         overlay[:, :, 3][self.clusters == self.labels[label]] = 0.
-        ax.imshow(overlay, cmap='binary')
         
+        # plot mask and label axis
+        ax.imshow(overlay, cmap='binary')
         ax.set(title='Cluster ' + label)
         ax.axis('off')
         
         
-    def plot_clusters(self, alpha=.4, ax=None):
+    def plot_clusters(self):
         """
-        Plot the original image and highlight each different cluster with a
-        random colored shade. Note this can often be very hard to see over
-        the colors of the original image, it is often better to plot each
-        seperately using plot_cluster. Plots on ax if given.
+        Plots the indevidual clusters via plot_cluster for every cluster
+        present.
         """
-              
-        # create an axis if not given
-        if not ax:
-            fig, ax = plt.subplots()
+        # setup figure
+        l = len(self.labels)
+        fig, axs = plt.subplots(int((1 + l / 2), 2), figsize=[20, n*10])
+
+        # plot each cluster
+        for label, ax in zip(self.label.keys(), axs.ravel()[:l]):
+            self.plot_cluster(label, ax=ax)
+
+        # delete unused plots
+        for ax in axs.ravel()[l:]:
+            fig.delaxes(ax)
+        plt.draw()
             
-        # plot the original image
-        ax.imshow(self.img)
+#         # create an axis if not given
+#         if not ax:
+#             fig, ax = plt.subplots()
+            
+#         # plot the original image
+#         ax.imshow(self.img)
         
-        # creaete an empty rgba mask
-        rgba = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
+#         # creaete an empty rgba mask
+#         rgba = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
         
-        # for every cluster
-        for clust in self.labels.values():
+#         # for every cluster
+#         for clust in self.labels.values():
             
-            # mask of this cluster
-            bool_arr = self.clusters == clust
+#             # mask of this cluster
+#             bool_arr = self.clusters == clust
             
-            # pick random colors
-            color = np.random.rand(3)
+#             # pick random colors
+#             color = np.random.rand(3)
             
-            # set each channel appropirately
-            rgba[:, :, 0][bool_arr] = color[0]
-            rgba[:, :, 1][bool_arr] = color[1]
-            rgba[:, :, 2][bool_arr] = color[2]
-            rgba[:, :, 3][bool_arr] = alpha
+#             # set each channel appropirately
+#             rgba[:, :, 0][bool_arr] = color[0]
+#             rgba[:, :, 1][bool_arr] = color[1]
+#             rgba[:, :, 2][bool_arr] = color[2]
+#             rgba[:, :, 3][bool_arr] = alpha
         
-        ax.imshow(rgba)
-        ax.set(title='Highlighted Clusters')
-        ax.axis('off')
+#         ax.imshow(rgba)
+#         ax.set(title='Highlighted Clusters')
+#         ax.axis('off')
         
         
     def get_composition(self, return_arr=False):
@@ -203,11 +213,14 @@ class Segment_Analyser():
             return n_grains
     
 
-    def get_gsd(self, label, return_arr=False):
+    def get_gsd(self, label, span=True, return_arr=False):
         """
         Plots the distribution of segment areas, perimeters and the ratio of
         the two (i.e. the grain size distribution) of the cluster with the 
         given label.
+        
+        If span is True this will also plot the span of this clusters segments
+        (can be lengthy calculation).
         
         If return_arr is true then a 2d array array is returned with 
         (size, perimeter, ratio) on the first axis and segment on the second.
@@ -240,21 +253,33 @@ class Segment_Analyser():
             ax.hist(arr)
             ax.set(title = label + ' ' + title + ' dist',
                    xlabel='Pixels', ylabel='Count')
-
-        # delete the unused figure
-        fig.delaxes(axs.ravel()[3])
+        
+        if span:
+            # calculate the span if wanted
+            print('calculating span\n')
+            span_arr = self._get_span(label, ax=axs.ravel()[3],
+                                      return_arr=True)
+            # return span as well as others if wanted
+            if return_arr:
+                return np.vstack([sizes, perimeters, ratios, span_arr]) 
             
-        if return_arr:
-            return np.vstack([sizes, perimeters, ratios]) 
+        else:                    
+            # delete the unused figure
+            fig.delaxes(axs.ravel()[3])
+            
+            # return arrays wanted
+            if return_arr:
+                return np.vstack([sizes, perimeters, ratios]) 
         
         
-    def get_span(self, label, return_arr=False):
+    def _get_span(self, label, return_arr=False, ax=None):
         """
         Plot the span distribtuion of cluster with the given label where
         span is defined as the longest distance between two points in the
         segment.
         
         If return_arr is true then a 1d segment span array is returned.
+        If ax is passed it will plot on that axis
         """
         
         # identify segments in this cluster
@@ -274,14 +299,17 @@ class Segment_Analyser():
             edges = np.vstack(np.where(edge_arr)).T
             spans[i] = pdist(edges).max()
         
+        # create an axis if not given
+        if ax == None:
+            fig, ax = plt.subplots(figsize=[15, 15])
+        
         # plot the histogram
-        plt.figure()
-        plt.hist(spans)
-        plt.gca().set(title = label + ' span dist', xlabel='Pixels',
-                      ylabel='Count')
+        ax.hist(spans)
+        ax.set(title = label + ' span dist', xlabel='Pixels', ylabel='Count')
         
         if return_arr:
             return spans
+                                
         
     def _get_edges(self, mask):
         """
@@ -328,7 +356,5 @@ if __name__ == '__main__':
     # # observe the different properties
     example_obj.get_composition()
     example_obj.get_grain_count()
-    example_obj.get_span('upper')
     example_obj.get_gsd('upper')
-    example_obj.get_span('lower')
     example_obj.get_gsd('lower')
