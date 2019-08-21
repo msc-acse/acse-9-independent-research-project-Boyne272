@@ -126,7 +126,8 @@ class MSLIC_wrapper():
             for n, obj in enumerate(self.SLIC_objs):
                 
                 # set the combined distance
-                obj._distances = combo_dist
+                obj.distances = combo_dist
+                
                 
                 # only calculate the new clusters once as this is same for all
                 if n == 0:
@@ -197,26 +198,26 @@ class MSLIC_wrapper():
             plt.savefig(path)
             
             
-# if __name__ == '__main__':
-#     # run an example of SLIC on two images, then MSLIC on both
-#     from tools import get_img
+if __name__ == '__main__':
+    # run an example of SLIC on two images, then MSLIC on both
+    from tools import get_img
     
-#     # setup
-#     grid = [40, 40]
-#     img_white = get_img("images/TX1_white_cropped.tif")
-#     img_polar = get_img("images/TX1_polarised_cropped.tif")
+    # setup
+    grid = [40, 40]
+    img_white = get_img("images/TX1_white_cropped.tif")
+    img_polar = get_img("images/TX1_polarised_cropped.tif")
     
-#     # iterate SLIC with just the white image
-#     obj_white = SLIC(img_white, grid)
-#     obj_white.iterate(10)
-#     obj_white.plot()
+    # iterate SLIC with just the white image
+    obj_white = SLIC(img_white, grid)
+    obj_white.iterate(10)
+    obj_white.plot()
     
-#     # iterate SLIC with just the polar image
-#     obj_polar = SLIC(img_polar, grid)
-#     obj_polar.iterate(10)
-#     obj_polar.plot()
+    # iterate SLIC with just the polar image
+    obj_polar = SLIC(img_polar, grid)
+    obj_polar.iterate(10)
+    obj_polar.plot()
     
-#     # iterate MSLIC with both white and polar images
-#     obj_both = MSLIC_wrapper([img_white, img_polar], grid)
-#     obj_both.iterate(10)
-#     obj_both.plot()
+    # iterate MSLIC with both white and polar images
+    obj_both = MSLIC_wrapper([img_white, img_polar], grid)
+    obj_both.iterate(10)
+    obj_both.plot()

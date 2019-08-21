@@ -21,7 +21,7 @@ class Test_SLIC(unittest.TestCase):
         that the adjasent bins list makes sense
         """
         set_seed(10)
-        img = get_img("images/TX1_white_cropped.tif")
+        img = get_img("images/example_white.tif")
         obj = SLIC(img, [4,4])
         
         # test the adjecent bins list
@@ -50,7 +50,7 @@ class Test_SLIC(unittest.TestCase):
         unit test that the vectors have been binned correctly and
         clusters initalised correctly
         """
-        img = get_img("images/TX1_white_cropped.tif")
+        img = get_img("images/example_white.tif")
         obj = SLIC(img, [4,4])
 
         # test bins
@@ -74,7 +74,7 @@ class Test_SLIC(unittest.TestCase):
         make sense after each of the three processes that make up a
         single iteration.
         """
-        img = get_img("images/TX1_white_cropped.tif")
+        img = get_img("images/example_white.tif")
         obj = SLIC(img, [4,4])
 
         # 1 of 3 iteration parts
@@ -129,7 +129,8 @@ class Test_SLIC(unittest.TestCase):
         unit test that the iterate function, mask output and all the plot
         options run without raising any errors
         """
-        img = get_img("images/TX1_white_cropped.tif")
+        img = get_img("images/example_white.tif")
+        img = img[:400, :400, :] # make smaller for faster tests
         obj = SLIC(img, [4,4])
 
         # check the iterate command runs
@@ -146,33 +147,38 @@ class Test_SLIC(unittest.TestCase):
             "Mask must have same x,y dimensions as original image"
             
         
+        
     def test_result(self):
         """
-        acceptance test that the outcome is as expected for a simple image by
-        checking a handful of manually identified points are seperated by the
-        algorithm
+        Here an image is iterated to produce a mask (any comlex mask works).
+        This mask is then coverted into a 3 channel image as used for a new
+        segmentation task. This image has uniform regions with clear boundaries
+        thus it should be easy to segment, and the segmentation should be the
+        same as the original mask. There is some difference due to the large
+        scale of the image and nature of the clusting, hence 80% agreement is
+        requiered.
         """
-        # setup and iterate
-        img = get_img("/content/images/SM1_250_250.tif")
-        obj = SLIC(img, [5,5])
-        obj.iterate(5)
         
+        # setup object and iterate
+        img_1 = get_img("images/example_white.tif")
+        img_1 = img_1[200:600, 200:600, :] # make smaller for faster test
+        obj_1 = SLIC(img_1, [4,4])
+        obj_1.iterate(5)
+
         # extract mask
-        mask = obj.get_segmentation()
-        
-        # define known points
-        known_points = [[10, 10],
-                        [50, 10],
-                        [10, 50],
-                        [240, 10],
-                        [240, 50]]
-        
-        # for each pair check they are in different segments
-        for x1, y1 in known_points:
-            for x2, y2 in known_points:
-                if x1 != x2 and y1 != y2:
-                    assert mask[y1, x1] != mask[y2, x2], \
-                        "Mask does not agree with expected"
+        mask_1 = obj_1.get_segmentation()
+
+        # create an image from this mask
+        img_2 = np.dstack([mask_1, mask_1, mask_1])
+
+        # iterate with the mask image
+        obj_2 = SLIC(img_2, [4,4])
+        obj_2 .iterate(10)
+
+        mask_2 = obj_2.get_segmentation()
+
+        similarity = np.isclose(mask_1, mask_2).mean()
+        assert similarity > 0.8, 'masks should be at least 80% similar'
 
         
 if __name__ == '__main__':
@@ -184,6 +190,7 @@ if __name__ == '__main__':
     test_obj.test_one_iteration()
     test_obj.test_plot()
     test_obj.test_result()
+    print('\nall tests passed')
     
 #     # unittest.main does not work in google colab, but should work elsewhere
 #     unittest.main()
