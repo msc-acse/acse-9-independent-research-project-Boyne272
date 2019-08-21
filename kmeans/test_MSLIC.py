@@ -106,7 +106,7 @@ class Test_MSLIC_wrapper(unittest.TestCase):
             "number of adjasent centers for that bin"
 
         # test clusters make sense
-        assert sum([o.numel() for o in obj._cluster_contense]) == obj._Np, \
+        assert sum([o.numel() for o in obj._cluster_contense]) == obj._np, \
             "clustered vectors needs to be same as number of pixels"
 
         assert obj.vec_clusts.unique().numel() == 16, \
