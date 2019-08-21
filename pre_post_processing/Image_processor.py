@@ -147,6 +147,15 @@ class Image_processor():
     # ==========================================
 
         
+    def threshold(self, value, key='curr'):
+        "threshold a single channel image to give a binary image"
+        # validate curr image
+        assert self.imgs['curr'].ndim == 2, 'curr must be a single-channel'
+        
+        self.imgs[key] = (self.imgs['curr'] > value).astype(float)
+        return self.imgs[key]
+        
+        
     def gabor_filters(self, frequency, n_angs, key='curr'):
         """
         Apply gabor filters of the given frequency and n_angles unfiormly
