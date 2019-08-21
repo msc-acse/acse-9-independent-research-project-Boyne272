@@ -119,7 +119,7 @@ class Segment_Analyser():
         ax.imshow(self.img)
         
         # creaete an empty rgba mask
-        rgba = np.zeros([*self.mask.shape, 4])
+        rgba = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
         
         # for every cluster
         for clust in self.labels.values():

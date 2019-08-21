@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # run all the tests if this is script is run independently
     test_obj = Test_Segment_Analyser()
     test_obj.test_full()
-    print('all tests passed')
+    print('\n all tests passed')
 
 #     # unittest.main does not work in google colab, but should work elsewhere
 #     unittest.main()
