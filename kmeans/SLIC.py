@@ -440,24 +440,24 @@ class SLIC(bin_base):
         return (edges > 0).astype(float) # any non-zero is an edge
     
             
-# if __name__ == '__main__':
-#     # run an example
-#     from tools import get_img
+if __name__ == '__main__':
+    # run an example
+    from tools import get_img
     
-#     # setup
-#     img = get_img("images/TX1_white_cropped.tif")
-#     obj = SLIC(img, [20,15])
+    # setup
+    img = get_img("images/example_white.tif")
+    obj = SLIC(img, [20,20])
 
-#     # plot the initial binning 
-#     obj.plot("setup")
-#     plt.gca().set(title='Initial Grid')
+    # plot the initial binning 
+    obj.plot("setup")
+    plt.gca().set(title='Initial Grid')
     
-#     # iterate
-#     obj.iterate(10)
+    # iterate
+    obj.iterate(10)
     
-#     # plot the resulting segmentation
-#     obj.plot('default')
-#     plt.gca().set(title='Segmentation after 10 Iterations')
+    # plot the resulting segmentation
+    obj.plot('default')
+    plt.gca().set(title='Segmentation after 10 Iterations')
     
-#     # plot the time taken
-#     obj.plot('time')
+    # plot the time taken
+    obj.plot('time')
