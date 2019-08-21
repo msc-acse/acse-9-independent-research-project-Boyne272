@@ -52,7 +52,7 @@ class Segment_Analyser():
         for label, clust in self.labels.items():
             
             # plot this cluster
-            self.plot_custer(label)
+            self.plot_cluster(label)
             plt.show()
             
             # get user input
