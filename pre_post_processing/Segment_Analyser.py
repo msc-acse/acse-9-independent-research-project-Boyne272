@@ -93,7 +93,7 @@ class Segment_Analyser():
         ax.imshow(self.img)
         
         # create a plot the cluster mask
-        overlay = np.zeros([*self.mask.shape, 4])
+        overlay = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
         overlay[:, :, 3] = .75
         
         overlay[:, :, 3][self.clusters == self.labels[label]] = 0.
