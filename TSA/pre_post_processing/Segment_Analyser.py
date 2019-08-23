@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
 from scipy.spatial.distance import pdist
-from tools import progress_bar
+from ..tools import progress_bar
 
 class Segment_Analyser():
     """

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import skimage as ski
 import skimage.feature as skf
 from scipy import ndimage as ndi
-from tools import get_img
+from ..tools import get_img
 
 
 class Image_processor():

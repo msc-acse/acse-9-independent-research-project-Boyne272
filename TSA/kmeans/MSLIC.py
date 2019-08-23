@@ -10,8 +10,8 @@ Part of the Automated Thin Section Analysis tool set
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
-from SLIC import SLIC
-from tools import progress_bar
+from ..tools import progress_bar
+from .SLIC import SLIC
 
 
 class MSLIC_wrapper():

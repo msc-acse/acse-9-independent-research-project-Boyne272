@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tools import progress_bar
+from ..tools import progress_bar
 import scipy.linalg as la
 
 

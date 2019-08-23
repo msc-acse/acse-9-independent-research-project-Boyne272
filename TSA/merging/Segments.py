@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
 from skimage import morphology
-from tools import progress_bar
+from ..tools import progress_bar
 
 
 # -----------------------------------------------------------------------------
@@ -589,7 +589,7 @@ class segment_group(Mask_utilities):
             
             # plot with color bar
             col = ax.imshow(conf, cmap='bwr')
-            plt.colorbar(col, shrink=.8)
+            plt.colorbar(col)
             ax.set(title='Edge Confidences')
             
             
