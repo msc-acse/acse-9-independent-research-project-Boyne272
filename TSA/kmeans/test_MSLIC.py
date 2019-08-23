@@ -12,7 +12,7 @@ import torch
 import matplotlib.pyplot as plt
 
 from MSLIC import MSLIC_wrapper
-from tools import set_seed, get_img
+from ..tools import set_seed, get_img
 
 
 class Test_MSLIC_wrapper(unittest.TestCase):

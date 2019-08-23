@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from SLIC import SLIC
-from tools import set_seed, get_img
+from ..tools import set_seed, get_img
 
 
 class Test_SLIC(unittest.TestCase):
