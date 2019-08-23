@@ -589,7 +589,7 @@ class segment_group(Mask_utilities):
             
             # plot with color bar
             col = ax.imshow(conf, cmap='bwr')
-            plt.colorbar(col)
+            plt.colorbar(col, shrink=.8)
             ax.set(title='Edge Confidences')
             
             
