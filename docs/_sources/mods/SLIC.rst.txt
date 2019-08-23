@@ -1,0 +1,4 @@
+SLIC
+====
+.. automodule:: SLIC
+   :members:
