@@ -1,7 +1,7 @@
 import unittest
 import matplotlib.pyplot as plt
 import numpy as np
-from tools import get_img
+from ..tools import get_img
 from Image_processor import Image_processor
 
 class Test_Image_processor(unittest.TestCase):
