@@ -15,19 +15,49 @@
 import os
 import sys
 
-sys.path.insert(0, '../kmeans/')
+print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+print(os.path.isdir('/usr/local/lib/python3.6/dist-packages/TSA/kmeans'), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+#print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+#print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+#os.path.isdir('')
+
+# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/kmeans/')
+# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/tools/')
+# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/pre_post_processing/')
+# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/merging/')
+
+
+sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/')
+
+
 # import SLIC
 # import MSLIC
 # import tools
 
-sys.path.insert(0, '../merging/')
+# sys.path.insert(0, '../TSA/merging/')
+# from ..TSA.merging.Segments import *
+# from ..TSA.merging.AGNES import *
 # import Segments
 # import AGNES
 
-sys.path.insert(0, '../pre_post_processing/')
+import numpy
+import TSA
+
+# from ..TSA.pre_post_processing.Image_processor import *
+# from ..TSA.pre_post_processing.Segment_Analyser import *
 # import Image_processor
 # import Segment_Analyser
 
+# sys.path.insert(0, '../TSA/tools/')
+# import tools
+
+# google colab module paths
+sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/')
+
+# theme import
+import sphinx_rtd_theme
+
+print(Segment_Analyser, '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
 # -- Project information -----------------------------------------------------
 
@@ -50,8 +80,10 @@ release = u'1.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
 extensions = [
     'sphinx.ext.autodoc',
+	"sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -87,7 +119,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

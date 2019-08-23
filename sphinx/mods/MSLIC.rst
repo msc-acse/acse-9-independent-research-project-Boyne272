@@ -1,5 +1,0 @@
-MSLIC
-=====
-.. automodule:: MSLIC
-   :members:
-

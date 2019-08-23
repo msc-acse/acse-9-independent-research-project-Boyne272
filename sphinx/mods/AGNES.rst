@@ -1,4 +1,0 @@
-AGNES
-========
-.. automodule:: AGNES
-   :members: 

@@ -2,8 +2,7 @@
 User Manual
 ===========
 
-This is an example of using the tools developed for the Thin Section
-Analysis project in the intended workflow.
+Created by Richard Boyne (rmb115@ic.ac.uk) on 29th August 2019
 
 Download Code
 -------------
@@ -14,132 +13,110 @@ packages are already locally present this is not needed.
 .. code:: ipython3
 
     from getpass import getpass
+    from gettext import gettext
     import os
     
-    !git config --global user.name "Richard Boyne"
-    !git config --global user.email "boynerichard@yahoo.co.uk"
-    
-    # if not in a repo clone the desired one
+    # if we have not already cloned before
     if not os.path.isdir(".git"):
         
         # get username and password
-        user = "Boyne272"
-        password = getpass('github password')
+        user = input('github username: ')
+        password = getpass('github password: ')
         os.environ['GITHUB_AUTH'] = user + ':' + password
-        
-        # clone the repo
-        !git clone --quiet https://$GITHUB_AUTH@github.com/msc-acse/acse-9-independent-research-project-Boyne272.git repo
     
-        # move the repo directory up one
-        !mv repo/.git .
-        
+        # clone the repo and move into it
+        !git clone --quiet https://$GITHUB_AUTH@github.com/msc-acse/acse-9-independent-research-project-Boyne272.git TSA_repo
+        %cd TSA_repo
+    
         # swap to the wanted branch
-    #     !git checkout master --quiet
-        !git checkout post_processing --quiet
+        !git checkout master --quiet
     
-        
-        # move to previous commit
-        !git reset --quiet --hard
-        
-    # remove the sample data if there
-    if os.path.isdir("sample_data"):
-        !rm -r sample_data/
-    
-    # remove the tmp repo folder if there
-    if os.path.isdir("repo"):    
-        !rm -r repo
-        
     # show where we are
     !git show --summary
 
+Install Module
+--------------
 
-.. parsed-literal::
+To install the module the requierments need first be installed, this can
+be done with
 
-    github password··········
-    [33mcommit 6f881be97474c6e86b1753964a084391b8edf009[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
-    Merge: 59dda18 6b8847d
-    Author: Richard Boyne <31725818+Boyne272@users.noreply.github.com>
-    Date:   Wed Aug 21 10:21:43 2019 +0100
-    
-        Merge pull request #5 from msc-acse/post_processing
-        
-        Post processing
-    
-    
+.. code:: ipython3
+
+    !pip install -r requirements.txt
+
+Now to install the moudle use pip install
+
+.. code:: ipython3
+
+    pip install .
+
+Alternativly the direcory TSA can be place locally where it is needed
+and imported just as if it had been installed
 
 Run Tests
 ---------
 
-Short example of running all module tests
+All tests are contained in the modules directory next to the .py files
+themselves. Pytest is able to pick up on them, alternativly test file
+will work if run by itself.
 
 .. code:: ipython3
 
-    !pytest # last run 21st Aug
+    !pytest # last run 23rd Aug
 
 
 .. parsed-literal::
 
     [1m============================= test session starts ==============================[0m
     platform linux2 -- Python 2.7.15+, pytest-3.6.4, py-1.8.0, pluggy-0.7.1
-    rootdir: /content, inifile:
+    rootdir: /content/TSA_repo, inifile:
     collected 24 items                                                             [0m
     
-    kmeans/test_MSLIC.py ...[36m                                                 [ 12%][0m
-    kmeans/test_SLIC.py .....[36m                                                [ 33%][0m
-    merging/test_AGNES.py ...[36m                                                [ 45%][0m
-    merging/test_Segments.py ........[36m                                        [ 79%][0m
-    pre_post_processing/test_Image_processor.py ....[36m                         [ 95%][0m
-    pre_post_processing/test_Segment_Analyser.py .[36m                           [100%][0m
+    TSA/kmeans/test_MSLIC.py ...[36m                                             [ 12%][0m
+    TSA/kmeans/test_SLIC.py .....[36m                                            [ 33%][0m
+    TSA/merging/test_AGNES.py ...[36m                                            [ 45%][0m
+    TSA/merging/test_Segments.py ........[36m                                    [ 79%][0m
+    TSA/pre_post_processing/test_Image_processor.py ....[36m                     [ 95%][0m
+    TSA/pre_post_processing/test_Segment_Analyser.py .[36m                       [100%][0m
     
-    [32m[1m========================== 24 passed in 81.07 seconds ==========================[0m
+    [32m[1m========================== 24 passed in 81.74 seconds ==========================[0m
     
 
-Imports
--------
+Example: Butterfly Segmentation
+===============================
 
 .. code:: ipython3
 
-    # Ipython magic functions
-    %load_ext autoreload
-    %autoreload 2
+    # Ipython Magic Functions
     %matplotlib inline
     
-    # path extensions to find local modules
-    import sys
-    sys.path.insert(0, "/content/kmeans")
-    sys.path.insert(0, "/content/merging")
-    sys.path.insert(0, "/content/pre_post_processing")
-
-.. code:: ipython3
-
     # imports
-    import torch
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd 
     
     # custom imports
-    from AGNES import AGNES
-    from Image_processor import Image_processor
-    from Segment_Analyser import Segment_Analyser
-    from Segments import segment_group
-    from SLIC import SLIC
-    from MSLIC import MSLIC_wrapper
+    from TSA.pre_post_processing import Image_processor
+    from TSA.pre_post_processing import Segment_Analyser
+    from TSA.merging import AGNES
+    from TSA.merging import segment_group
+    from TSA.kmeans import SLIC
+    from TSA.kmeans import MSLIC_wrapper
 
-Butterfly Segmentation Example
-==============================
+Image Loading
+-------------
 
 First we need to load the image, Image processor is a module to assist
 with loading an image and apply any kind of filters initially wanted.
 
 .. code:: ipython3
 
-    butterfly_IP = Image_processor(path='/content/images/butterfly.tif')
+    butterfly_IP = Image_processor(path='images/butterfly.tif')
     butterfly_IP.plot()
 
 
 
-.. image:: output_10_0.png
+.. image:: output_13_0.png
 
 
 Segmentation
@@ -164,10 +141,10 @@ Now we can look at what SLIC manages to do with this.
 
 .. parsed-literal::
 
-    Progress |###################################################| 84.5368 s
+    Progress |###################################################| 87.9820 s
 
 
-.. image:: output_14_1.png
+.. image:: output_17_1.png
 
 
 Segment Clustering
@@ -193,14 +170,13 @@ be more segments than in the above image.
 
 .. parsed-literal::
 
-    641
     Initalising 641 segments
-    Progress |###################################################| 53.6985 s
+    Progress |###################################################| 56.7263 s
     
     
 
 
-.. image:: output_16_1.png
+.. image:: output_19_1.png
 
 
 This splitting makes several very small segments. We can force these to
@@ -215,7 +191,7 @@ merge with there largest neighbour with segment\_group.
 
     13 segments merged
     Initalising 65 segments
-    Progress |###################################################| 5.6965 s
+    Progress |###################################################| 5.4610 s
     
     
 
@@ -338,12 +314,12 @@ segments by common features. Here we are using the AGNES clustering
 
 .. parsed-literal::
 
-    Progress |###################################################| 0.3791 s
+    Progress |###################################################| 0.3544 s
     
     
 
 
-.. image:: output_22_1.png
+.. image:: output_25_1.png
 
 
 Plotted above is merge distance vs iterations and its respective
@@ -360,7 +336,7 @@ certain viaration in standard deviation, here chosen to be 3.
 
 .. parsed-literal::
 
-    Clustering up to 2nd derivative 0.04021483184552015
+    Clustering up to 2nd derivative 0.04021483184552015  distance  0.3929593875662745
     Clustering into 14 segments
     
 
@@ -377,7 +353,7 @@ segments were cluster together.
 
 
 
-.. image:: output_26_0.png
+.. image:: output_29_0.png
 
 
 Though only color was used the clusters are mostly reasonable, thoough a
@@ -386,12 +362,12 @@ clusters we can merge with them, if not we can do another featuer
 extraction and clustering without needing to reinitalise the
 segment\_group object.
 
-Edge analysis (if wanted)
--------------------------
+Edge analysis
+-------------
 
 If we want to an edge detection can be done to assist the later merging
 so that only segments with no edge between them are merged. This is not
-needed to do the mergering, and so this section can be skipped.
+needed to do the mergering, so this section can be skipped.
 
 First we need an image with edges detected in it.
 
@@ -399,13 +375,13 @@ First we need an image with edges detected in it.
 
     butterfly_IP.reset()
     butterfly_IP.scharr()
-    butterfly_IP.grey_scale()
+    grey_img = butterfly_IP.grey_scale()
     binary_edges = butterfly_IP.threshold(value=.05)
     butterfly_IP.plot()
 
 
 
-.. image:: output_29_0.png
+.. image:: output_32_0.png
 
 
 Now by defining an edge confidence function with this image (similar to
@@ -425,7 +401,7 @@ segment\_group object.
 
 
 
-.. image:: output_31_0.png
+.. image:: output_34_0.png
 
 
 So as we can see some edges are confident that they exist and others are
@@ -457,16 +433,16 @@ also merge without clusters and just edge confidence instead.
 
     412 segments merged
     Initalising 113 segments
-    Progress |###################################################| 9.8255 s
+    Progress |###################################################| 9.5287 s
     
     
 
 
-.. image:: output_34_1.png
+.. image:: output_37_1.png
 
 
-Repeat (if wanted)
-------------------
+Repeat
+------
 
 At this point the process of clustering, edge detection and merging
 could be repeated if wanted.
@@ -477,30 +453,6 @@ if one experiments with different clustering here it will affect the
 clusters used in the segment analysis section.
 
 This second repeat is done here as it is not benificial for this image.
-
-.. code:: ipython3
-
-    # # feature extraction
-    # butterfly_feats = butterfly_segs.feature_extraction(
-    #                       extract_func = basic_color_extraction,
-    #                       func_vars = [blured_img])
-    
-    # # clustering
-    # butterly_AGNES = AGNES(butterfly_feats)
-    # butterly_AGNES.iterate()
-    
-    # # get the clustering and assign it
-    # butterly_clusters = butterly_AGNES.cluster_by_derivative(n_std=2., plot=False)
-    # butterfly_segs.assign_clusters(butterly_clusters)
-    
-    # # plot these clusters
-    # butterfly_segs.plot('cluster_all', back_img=original_img)
-
-.. code:: ipython3
-
-    # # implement cluster merging (no edge detection used this time)
-    # butterfly_segs.merge_by_cluster()
-    # butterfly_segs.plot('both', back_img=original_img)
 
 Segmentation Analysis
 ---------------------
@@ -535,7 +487,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
 
 
-.. image:: output_41_0.png
+.. image:: output_42_0.png
 
 
 .. parsed-literal::
@@ -546,7 +498,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_2.png
+.. image:: output_42_2.png
 
 
 .. parsed-literal::
@@ -557,7 +509,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_4.png
+.. image:: output_42_4.png
 
 
 .. parsed-literal::
@@ -568,7 +520,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_6.png
+.. image:: output_42_6.png
 
 
 .. parsed-literal::
@@ -579,7 +531,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_8.png
+.. image:: output_42_8.png
 
 
 .. parsed-literal::
@@ -590,7 +542,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_10.png
+.. image:: output_42_10.png
 
 
 .. parsed-literal::
@@ -601,7 +553,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_12.png
+.. image:: output_42_12.png
 
 
 .. parsed-literal::
@@ -612,7 +564,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_14.png
+.. image:: output_42_14.png
 
 
 .. parsed-literal::
@@ -623,7 +575,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_16.png
+.. image:: output_42_16.png
 
 
 .. parsed-literal::
@@ -634,7 +586,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_18.png
+.. image:: output_42_18.png
 
 
 .. parsed-literal::
@@ -645,7 +597,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_20.png
+.. image:: output_42_20.png
 
 
 .. parsed-literal::
@@ -656,7 +608,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_22.png
+.. image:: output_42_22.png
 
 
 .. parsed-literal::
@@ -667,7 +619,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_24.png
+.. image:: output_42_24.png
 
 
 .. parsed-literal::
@@ -678,7 +630,7 @@ Here we will just label with sky, wing or flower for simplicity.
     
 
 
-.. image:: output_41_26.png
+.. image:: output_42_26.png
 
 
 .. parsed-literal::
@@ -701,7 +653,7 @@ need to run a few times to get a clear image.
 
 
 
-.. image:: output_43_0.png
+.. image:: output_44_0.png
 
 
 As can be seen there is some confusion between bits of wing and the
@@ -728,26 +680,6 @@ We can see the distributions of each cluster as well.
     
 
 
-.. image:: output_45_1.png
-
-
-
-.. image:: output_45_2.png
-
-
-.. code:: ipython3
-
-    # these take slighly longer to find
-    for label in ['sky', 'wing', 'flower']:
-        butterfly_SA.get_gsd(label)
-        butterfly_SA.get_span(label)
-
-
-.. parsed-literal::
-
-    Progress |###################################################| 3.2276 s
-
-
 .. image:: output_46_1.png
 
 
@@ -755,20 +687,33 @@ We can see the distributions of each cluster as well.
 .. image:: output_46_2.png
 
 
+.. code:: ipython3
 
-.. image:: output_46_3.png
-
-
-
-.. image:: output_46_4.png
-
+    # these take slighly longer to find
+    for label in ['sky', 'wing', 'flower']:
+        butterfly_SA.get_gsd(label)
 
 
-.. image:: output_46_5.png
+.. parsed-literal::
+
+    Progress |###################################################| 3.0971 scalculating span
+    
+    Progress |###################################################| 9.3110 scalculating span
+    
+    Progress |###################################################| 2.9703 scalculating span
+    
+    Progress |###################################################| 3.2278 s
+
+
+.. image:: output_47_1.png
 
 
 
-.. image:: output_46_6.png
+.. image:: output_47_2.png
+
+
+
+.. image:: output_47_3.png
 
 
 If any of the results want to be further analysed than an option
@@ -778,8 +723,3 @@ above.
 To save results all that needed is to save the segmentation mask and
 cluster mask. These can likewise be used to pick up from any point in
 the routene shown here.
-
-For further information refer to the docstrings at \_\_\_\_\_\_\_\_\_.
-
-\_ created by Richard Boyne (rmb115@ic.ac.uk) on 29th August 2019
-=================================================================
