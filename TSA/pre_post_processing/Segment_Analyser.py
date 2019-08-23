@@ -109,46 +109,19 @@ class Segment_Analyser():
         present.
         """
         # setup figure
-        l = len(self.labels)
-        fig, axs = plt.subplots(int((1 + l / 2), 2), figsize=[20, n*10])
-
+        n_lab = len(self.labels)
+        n_row = int((1 + n_lab) / 2)
+        fig, axs = plt.subplots(n_row, 2, figsize=[20, n_row*10])
+        
         # plot each cluster
-        for label, ax in zip(self.label.keys(), axs.ravel()[:l]):
+        for label, ax in zip(self.labels.keys(), axs.ravel()[:n_lab]):
             self.plot_cluster(label, ax=ax)
 
         # delete unused plots
-        for ax in axs.ravel()[l:]:
+        for ax in axs.ravel()[n_lab:]:
             fig.delaxes(ax)
         plt.draw()
-            
-#         # create an axis if not given
-#         if not ax:
-#             fig, ax = plt.subplots()
-            
-#         # plot the original image
-#         ax.imshow(self.img)
         
-#         # creaete an empty rgba mask
-#         rgba = np.zeros([self.mask.shape[0], self.mask.shape[1], 4])
-        
-#         # for every cluster
-#         for clust in self.labels.values():
-            
-#             # mask of this cluster
-#             bool_arr = self.clusters == clust
-            
-#             # pick random colors
-#             color = np.random.rand(3)
-            
-#             # set each channel appropirately
-#             rgba[:, :, 0][bool_arr] = color[0]
-#             rgba[:, :, 1][bool_arr] = color[1]
-#             rgba[:, :, 2][bool_arr] = color[2]
-#             rgba[:, :, 3][bool_arr] = alpha
-        
-#         ax.imshow(rgba)
-#         ax.set(title='Highlighted Clusters')
-#         ax.axis('off')
         
         
     def get_composition(self, return_arr=False):
