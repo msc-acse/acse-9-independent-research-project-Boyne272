@@ -15,6 +15,10 @@ setup(
    author='Richard Boyne',
    author_email='rmb115@ic.ac.uk',
    url="https://github.com/msc-acse/acse-9-independent-research-project-Boyne272",
-   packages=['TSA.kmeans', 'TSA.merging', 'TSA.pre_post_processing', 'TSA.tools'],
+   packages=find_packages(),
+#    packages=['TSA'],
+#    packages=['TSA.kmeans', 'TSA.merging', 'TSA.pre_post_processing', 'TSA.tools'],
    install_requires=['numpy', 'matplotlib', 'scipy', 'torch', 'scikit-image']
 )
+
+print(find_packages(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
