@@ -15,19 +15,27 @@
 import os
 import sys
 
-sys.path.insert(0, '../kmeans/')
-# import SLIC
-# import MSLIC
-# import tools
+# ############################################################################
+# IMPORTANT
+# it took many hours to figure out that sphinx was building in python 2.7
+# for some retarded reason by default, which breaks some of this packages
+# dependencies hence it fails to build the documentation.
+# the following hack line in the makefile forces sphinx to use python 3
+# without it this will not work
+# SPHINXBUILD   = python3 -c "import sys,sphinx;sys.exit(sphinx.main(sys.argv))"
 
-sys.path.insert(0, '../merging/')
-# import Segments
-# import AGNES
+# add the path to the python 3.6 packages
+sys.path.append('/usr/local/lib/python3.6/dist-packages/')
 
-sys.path.insert(0, '../pre_post_processing/')
-# import Image_processor
-# import Segment_Analyser
+# import theme
+import sphinx_rtd_theme
 
+# print the sys paths to check the python version
+print('\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n',
+sys.path,
+'\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
+
+# ############################################################################
 
 # -- Project information -----------------------------------------------------
 
@@ -52,6 +60,7 @@ release = u'1.0.0'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+	'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -87,7 +96,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

@@ -3,42 +3,42 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Automated Thin Section Analysis's documentation!
-===========================================================
+Automated Thin Section Analysis
+===============================
 
+This is the documentation page for Automated Thin Section Analysis toolset combined in the TSA python package.
+
+Github repo: https://github.com/msc-acse/acse-9-independent-research-project-Boyne272
 
 Documentation for the Code
 **************************
 
 .. toctree::
    :maxdepth: 2
-   :caption: Seup:
+   :caption: Guides:
    
-   Instillation <mods/instillation>
    User Manual <man/User_Manual>
    
 .. toctree::
    :maxdepth: 2
-   :caption: _Classes:
+   :caption: Documentation:
    
-   SLIC <mods/SLIC>
-   MSLIC <mods/MSLIC>
-   Segments <mods/Segments>
-   AGNES <mods/AGNES>
-   Image Processor <mods/Image_processor>
-   Segment Analyser <mods/Segment_Analyser>
-   Tools <mods/tools>
+   kmeans <mods/kmeans>
+   merging <mods/merging>
+   pre_post_processing <mods/pre_post_processing>
+   tools <mods/tools>
+   
 
-   
 .. toctree::
    :maxdepth: 2
-   :caption: Formalities:
+   :caption: Housekeeping:
    
    Licence <mods/Licence>
+   Requirements <mods/requirements>
    
    
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

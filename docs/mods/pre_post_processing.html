@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pre_post_processing &mdash; Automated Thin Section Analysis 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="tools" href="tools.html" />
+    <link rel="prev" title="merging" href="merging.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Automated Thin Section Analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Guides:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../man/User_Manual.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man/User_Manual.html#example-butterfly-segmentation">Example: Butterfly Segmentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="kmeans.html">kmeans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">merging</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pre_post_processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-TSA.pre_post_processing.Segment_Analyser">Segment_Analyser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-TSA.pre_post_processing.Image_processor">Image_processor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Housekeeping:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automated Thin Section Analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>pre_post_processing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/mods/pre_post_processing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pre-post-processing">
+<h1>pre_post_processing<a class="headerlink" href="#pre-post-processing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-TSA.pre_post_processing.Segment_Analyser">
+<span id="segment-analyser"></span><h2>Segment_Analyser<a class="headerlink" href="#module-TSA.pre_post_processing.Segment_Analyser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser">
+<em class="property">class </em><code class="descclassname">TSA.pre_post_processing.Segment_Analyser.</code><code class="descname">Segment_Analyser</code><span class="sig-paren">(</span><em>img</em>, <em>mask</em>, <em>clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a segmentation and its clustering. Gets user inputs to label
+each cluster. Then the appropirate distriubtions of the labelled clusters
+are calculated.</p>
+<p>Segment_Analyser(img, mask, clusters)</p>
+<dl class="docutils">
+<dt>img <span class="classifier-delimiter">:</span> <span class="classifier">2d or 3d numpy array</span></dt>
+<dd>An rgb, rgba, or grey scale array of the image. Used for visulisation
+only</dd>
+<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>Segmentation mask for analysing distibuions</dd>
+<dt>clusters <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>Clustering mask for identifying different materials</dd>
+</dl>
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_composition">
+<code class="descname">get_composition</code><span class="sig-paren">(</span><em>return_arr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a bar graph of fractional composition for each label.</p>
+<p>These vaues are also printed in a table.</p>
+<p>If return_arr is true then a 1d relative compositions array is returned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_grain_count">
+<code class="descname">get_grain_count</code><span class="sig-paren">(</span><em>return_arr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_grain_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the number of segments in each cluster on a bar graph.</p>
+<p>These vaues are also printed in a table.</p>
+<p>If return_arr is true then a 1d grain count array is returned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_gsd">
+<code class="descname">get_gsd</code><span class="sig-paren">(</span><em>label</em>, <em>span=True</em>, <em>return_arr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_gsd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the distribution of segment areas, perimeters and the ratio of
+the two (i.e. the grain size distribution) of the cluster with the 
+given label.</p>
+<p>If span is True this will also plot the span of this clusters segments
+(can be lengthy calculation).</p>
+<p>If return_arr is true then a 2d array array is returned with 
+(size, perimeter, ratio) on the first axis and segment on the second.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.plot_cluster">
+<code class="descname">plot_cluster</code><span class="sig-paren">(</span><em>label</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.plot_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the original image and mask all but the cluster with the
+given label. Plots on ax if given.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.plot_clusters">
+<code class="descname">plot_clusters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.plot_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the indevidual clusters via plot_cluster for every cluster
+present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.set_labels">
+<code class="descname">set_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.set_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt the user for every cluster to give label for it. If the same
+label is given twice these clusters are merged.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-TSA.pre_post_processing.Image_processor">
+<span id="image-processor"></span><h2>Image_processor<a class="headerlink" href="#module-TSA.pre_post_processing.Image_processor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor">
+<em class="property">class </em><code class="descclassname">TSA.pre_post_processing.Image_processor.</code><code class="descname">Image_processor</code><span class="sig-paren">(</span><em>path=''</em>, <em>img=array([]</em>, <em>dtype=float64)</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to wrap all image filtering and preprocessing. All functions
+are wrapped around skimage. Use path to load an image from file or
+img to load from an array.</p>
+<p>Image_processor(path=’‘, img=np.array([])</p>
+<p>Images are stored in an internal dictionarry ‘imgs’. The ‘curr’ entry is 
+where all filters are applied and the key passed to every method is where
+to store the resultant image. This way many filters can be stacked together
+in ‘curr’ until the final image is stored seperatly under a provided key.</p>
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.canny">
+<code class="descname">canny</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.canny" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply canny edge detection routine on a single channel image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.dilation">
+<code class="descname">dilation</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>size=3</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.dilation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply dilation on a grey scale image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.erosion">
+<code class="descname">erosion</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>size=3</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.erosion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply errosion on a grey scale image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.gabor_filters">
+<code class="descname">gabor_filters</code><span class="sig-paren">(</span><em>frequency</em>, <em>n_angs</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.gabor_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply gabor filters of the given frequency and n_angles unfiormly
+distibuted between [0, 180] deg. All the angles are average to
+give a single channel output.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.gauss">
+<code class="descname">gauss</code><span class="sig-paren">(</span><em>sigma=1</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.gauss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply guassian blur with sigma standard deviation on a multi-channel
+image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.gauss_grey">
+<code class="descname">gauss_grey</code><span class="sig-paren">(</span><em>sigma=1</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.gauss_grey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply guassian blur with sigma standard deviation on a single-channel
+image (i.e. grey scale image)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.grey_scale">
+<code class="descname">grey_scale</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.grey_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an RGB image to grey scale (single channel)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.hog">
+<code class="descname">hog</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.hog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply histogram of gradients to either single or multi-channel images</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.hsv">
+<code class="descname">hsv</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.hsv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an RGB image to hsv scale (both 2 channel)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.laplace">
+<code class="descname">laplace</code><span class="sig-paren">(</span><em>size=3</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.laplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply laplace gradient filters of the given size on single or 
+multi-chanel images</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.lbp">
+<code class="descname">lbp</code><span class="sig-paren">(</span><em>radius=3</em>, <em>method='uniform'</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.lbp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply local binary pattern over a square region of the given radius
+to a grey scale image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.median">
+<code class="descname">median</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.median" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a median filter on a single channel image with addtitonal
+kwargs passed to skimage.filters.median</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.normalise">
+<code class="descname">normalise</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>std=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.normalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take single channel image and normalise it to have mean=0, given std</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot an image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.prewitt">
+<code class="descname">prewitt</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.prewitt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply prewitt edge detection routine on a single channel image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.rebase">
+<code class="descname">rebase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.rebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>mask the working image the new base</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><em>key='original'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the working image with the given key</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>path</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>save the given key on the given path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.scharr">
+<code class="descname">scharr</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.scharr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply scharr edge detection filters on a multi-channel image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.select_channel">
+<code class="descname">select_channel</code><span class="sig-paren">(</span><em>channel</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.select_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a single channel of a multi-channel image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.sobel">
+<code class="descname">sobel</code><span class="sig-paren">(</span><em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.sobel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply sobel edge detection filters on a multi-channel image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.store">
+<code class="descname">store</code><span class="sig-paren">(</span><em>array</em>, <em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.store" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a given array to the imgs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.pre_post_processing.Image_processor.Image_processor.threshold">
+<code class="descname">threshold</code><span class="sig-paren">(</span><em>value</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>threshold a single channel image to give a binary image</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tools.html" class="btn btn-neutral float-right" title="tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="merging.html" class="btn btn-neutral float-left" title="merging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Richard Boyne
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
