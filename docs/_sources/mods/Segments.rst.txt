@@ -1,4 +1,0 @@
-Segments
-========
-.. automodule:: Segments
-   :members: 

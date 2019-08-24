@@ -15,49 +15,27 @@
 import os
 import sys
 
-print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-print(os.path.isdir('/usr/local/lib/python3.6/dist-packages/TSA/kmeans'), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-#print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-#print(os.getcwd(), '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-#os.path.isdir('')
+# ############################################################################
+# IMPORTANT
+# it took many hours to figure out that sphinx was building in python 2.7
+# for some retarded reason by default, which breaks some of this packages
+# dependencies hence it fails to build the documentation.
+# the following hack line in the makefile forces sphinx to use python 3
+# without it this will not work
+# SPHINXBUILD   = python3 -c "import sys,sphinx;sys.exit(sphinx.main(sys.argv))"
 
-# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/kmeans/')
-# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/tools/')
-# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/pre_post_processing/')
-# sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/TSA/merging/')
+# add the path to the python 3.6 packages
+sys.path.append('/usr/local/lib/python3.6/dist-packages/')
 
-
-sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/')
-
-
-# import SLIC
-# import MSLIC
-# import tools
-
-# sys.path.insert(0, '../TSA/merging/')
-# from ..TSA.merging.Segments import *
-# from ..TSA.merging.AGNES import *
-# import Segments
-# import AGNES
-
-import numpy
-import TSA
-
-# from ..TSA.pre_post_processing.Image_processor import *
-# from ..TSA.pre_post_processing.Segment_Analyser import *
-# import Image_processor
-# import Segment_Analyser
-
-# sys.path.insert(0, '../TSA/tools/')
-# import tools
-
-# google colab module paths
-sys.path.insert(0, '/usr/local/lib/python3.6/dist-packages/')
-
-# theme import
+# import theme
 import sphinx_rtd_theme
 
-print(Segment_Analyser, '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+# print the sys paths to check the python version
+print('\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n',
+sys.path,
+'\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
+
+# ############################################################################
 
 # -- Project information -----------------------------------------------------
 
@@ -80,10 +58,9 @@ release = u'1.0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-
 extensions = [
     'sphinx.ext.autodoc',
-	"sphinx_rtd_theme",
+	'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

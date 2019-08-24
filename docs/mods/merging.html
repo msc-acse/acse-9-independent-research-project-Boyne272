@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>merging &mdash; Automated Thin Section Analysis 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pre_post_processing" href="pre_post_processing.html" />
+    <link rel="prev" title="kmeans" href="kmeans.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Automated Thin Section Analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Guides:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../man/User_Manual.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../man/User_Manual.html#example-butterfly-segmentation">Example: Butterfly Segmentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="kmeans.html">kmeans</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">merging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-TSA.merging.AGNES">AGNES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-TSA.merging.Segments">Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pre_post_processing.html">pre_post_processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Housekeeping:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automated Thin Section Analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>merging</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/mods/merging.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="merging">
+<h1>merging<a class="headerlink" href="#merging" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-TSA.merging.AGNES">
+<span id="agnes"></span><h2>AGNES<a class="headerlink" href="#module-TSA.merging.AGNES" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="TSA.merging.AGNES.AGNES">
+<em class="property">class </em><code class="descclassname">TSA.merging.AGNES.</code><code class="descname">AGNES</code><span class="sig-paren">(</span><em>features</em>, <em>join_by='max'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clusters the given feature vectors by the AGNES algorithm</p>
+<p>AGNES(features, join_by=’max’)</p>
+<dl class="docutils">
+<dt>features <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>The features to cluster by with dimensions (n_samples, n_features).
+It is advised to input features with normalised distributions
+as they are not scaled here and this is a distance based clustering
+algoithm</dd>
+<dt>join_by <span class="classifier-delimiter">:</span> <span class="classifier">string (optional)</span></dt>
+<dd><p class="first">The method by which to recalculate distance to a new group after
+merging occures. Allowed options are:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>‘max’ takes the new clusters distance as the maximum of
+either of the joined vectors distances</li>
+<li>‘min’ same as above but with minimum distance</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="method">
+<dt id="TSA.merging.AGNES.AGNES.cluster_by_derivative">
+<code class="descname">cluster_by_derivative</code><span class="sig-paren">(</span><em>n_std=3.0</em>, <em>plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_by_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the grouping by allowing all mergers up to a cutoff, here
+here determined by a vairation in the second derivative over the given
+numbers of standard deviation.</p>
+<p>plot bool will plot the grouping projection in 2d.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.AGNES.AGNES.cluster_by_distance">
+<code class="descname">cluster_by_distance</code><span class="sig-paren">(</span><em>cutoff_dist=1.0</em>, <em>plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_by_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the grouping by allowing all mergers up to a given join distance.
+Plot will plot the grouping projection in 2d.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.AGNES.AGNES.cluster_by_index">
+<code class="descname">cluster_by_index</code><span class="sig-paren">(</span><em>index</em>, <em>plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the grouping by allowing all mergers up to a given index,
+There will be N-index clusters where N is the number of samples
+(-1 from there being N-1 maximum joins is cancled by +1 from indexs
+starting at 0).
+Plot will plot the grouping projection in 2d.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.AGNES.AGNES.cluster_distance_plot">
+<code class="descname">cluster_distance_plot</code><span class="sig-paren">(</span><em>option='all'</em>, <em>ax=None</em>, <em>last_few=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_distance_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the option vs iterations on the given axis</p>
+<dl class="docutils">
+<dt>option <span class="classifier-delimiter">:</span> <span class="classifier">string (optional)</span></dt>
+<dd><p class="first">What to plot aginst iteration, choose from:
+- ‘dists’ plots the join distance
+- ‘1st’ plots the numerical first derivative
+- ‘2nd’plots the numerical second derivative
+- ‘all’ (default) plots plots all of the above</p>
+<blockquote class="last">
+<div>(ignores ax and last few)</div></blockquote>
+</dd>
+<dt>ax <span class="classifier-delimiter">:</span> <span class="classifier">Matplotlib axis (optional)</span></dt>
+<dd>The axis to plot on, one is created if not given. If ‘all’ chosen
+then this setting is ignored</dd>
+<dt>last_few <span class="classifier-delimiter">:</span> <span class="classifier">bool (optional)</span></dt>
+<dd>Plot only the last 25 points (or all if less than 25 in total).
+If ‘all’ chosen then this setting is ignored</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.AGNES.AGNES.iterate">
+<code class="descname">iterate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.iterate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge closest pairs until all datapoints are connected. This has to be
+done before any clustering may occure.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-TSA.merging.Segments">
+<span id="segments"></span><h2>Segments<a class="headerlink" href="#module-TSA.merging.Segments" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="TSA.merging.Segments.Mask_utilities">
+<em class="property">class </em><code class="descclassname">TSA.merging.Segments.</code><code class="descname">Mask_utilities</code><span class="sig-paren">(</span><em>mask</em>, <em>connected=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.Mask_utilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of utilities for minipulating a mask, such as getting its
+outline or creating an rgba array for plotting</p>
+<p>Mask_utilities(mask, connected=True)</p>
+<dl class="docutils">
+<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>integer array to be used</dd>
+<dt>connected <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd>if true will enforce connectivity of each region in the mask
+via skimgs morphology package. Defaults to true.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="TSA.merging.Segments.segment">
+<em class="property">class </em><code class="descclassname">TSA.merging.Segments.</code><code class="descname">segment</code><span class="sig-paren">(</span><em>cords</em>, <em>edges</em>, <em>index</em>, <em>group_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single segment which holds its constituent pixels, edge pixels and
+figures out its neighbours. This is to be used by the segment_group obj.</p>
+<p>segment(cords, edges, index, group_obj)</p>
+<dl class="docutils">
+<dt>cords <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>The cordinates of this segments pixels in shape (N, 2) where N is the
+number of pixels and the second axis is the X, Y cordinates</dd>
+<dt>edges <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>The cordinates of this segments edge pixels in the same shape as cords</dd>
+<dt>index <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The id of this segment used in the segment_group.seg_dict</dd>
+<dt>group_obj <span class="classifier-delimiter">:</span> <span class="classifier">segment_group obj</span></dt>
+<dd>The segment_group which holds all segment objects. This is used to
+access the locations of other segments in order to find neighbours</dd>
+</dl>
+<dl class="method">
+<dt id="TSA.merging.Segments.segment.edge_mask">
+<code class="descname">edge_mask</code><span class="sig-paren">(</span><em>arr</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.edge_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill the given 2d arr at this segments edge values with this segments
+edge confidence at that boarder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment.edge_plot">
+<code class="descname">edge_plot</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.edge_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot this pixles edges on the given axis with a different color for
+each edge and label with a legend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment.fill_mask">
+<code class="descname">fill_mask</code><span class="sig-paren">(</span><em>rgba</em>, <em>color=[]</em>, <em>alpha=0.4</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.fill_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill the given 3d rgba array with this segents cordinates using the given
+color values and given alpha (opaqueness).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="TSA.merging.Segments.segment_group">
+<em class="property">class </em><code class="descclassname">TSA.merging.Segments.</code><code class="descname">segment_group</code><span class="sig-paren">(</span><em>mask</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object that handles a feature extraction and merging of a segment mask
+though the use of segment instances. Upon initalisation these segments
+locate their neighbours, edges and enforce connectivity of each segment.
+Note the neighbour identification is a costly process.</p>
+<p>segment_group(mask)</p>
+<dl class="docutils">
+<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
+<dd>integer array of a mask governing a segmentation</dd>
+</dl>
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.assign_clusters">
+<code class="descname">assign_clusters</code><span class="sig-paren">(</span><em>clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.assign_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store the clusters of each segment for use in merge_by_cluster. This
+is done seperately so that the segments of each cluster can be plotted
+before the merging is done.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.edge_confidence">
+<code class="descname">edge_confidence</code><span class="sig-paren">(</span><em>confidence_func</em>, <em>func_vars</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.edge_confidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop over every segment with the confidence function to obtain the
+edge confidence between every neighbour pair. This confidence value
+is then stored on each segment and used in the merging functions.</p>
+<dl class="docutils">
+<dt>confidence_func <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
+<dd>callabel which accepts (X_cords, Y_cords, <a href="#id1"><span class="problematic" id="id2">*</span></a>func_vars) where
+cordinates are of the segment edge with one neighbour and
+returns a single value of the confidence of an edges presence. 
+By default &gt;1 is consider to be an edge and &lt;-1 is considered
+to be no edge, however this can be overwritten in the mergeing
+functions. Note that X,Y is given in the visible sense
+(i.e. an array is indexed [y, x])</dd>
+<dt>func_vars <span class="classifier-delimiter">:</span> <span class="classifier">tuple of vairables</span></dt>
+<dd>vairable to be passed into the fucntion to evaluate the segments
+edge confidence. This is often some edge detected versions of the
+original image to be indexed at the segments cordinates</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.enforce_size">
+<code class="descname">enforce_size</code><span class="sig-paren">(</span><em>min_size=50</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.enforce_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge small sections below the given area with their largest neighbour</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.feature_extraction">
+<code class="descname">feature_extraction</code><span class="sig-paren">(</span><em>extract_func</em>, <em>func_vars</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.feature_extraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop over every segment with the extract function to obtain the
+feature vectors for each segement.</p>
+<dl class="docutils">
+<dt>extract_func <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
+<dd>callabel which accepts (X_cords, Y_cords, <a href="#id3"><span class="problematic" id="id4">*</span></a>func_vars) where
+the cordinates are of a single segment and returns a tuple of
+features of that segment. Note that X,Y is  given in the visible
+sense (i.e. an array is indexed [y, x])</dd>
+<dt>func_vars <span class="classifier-delimiter">:</span> <span class="classifier">tuple of vairables</span></dt>
+<dd>vairable to be passed into the fucntion to evaluate the segments
+feaures. This is often some filtered versions of the original 
+image to be indexed at the segments cordinates</dd>
+</dl>
+<dl class="docutils">
+<dt>feats <span class="classifier-delimiter">:</span> <span class="classifier">2d array</span></dt>
+<dd>array of segment features with shape (n segments, n features)</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.get_cluster_mask">
+<code class="descname">get_cluster_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.get_cluster_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a mask of the cluster of each segment</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.merge_by_cluster">
+<code class="descname">merge_by_cluster</code><span class="sig-paren">(</span><em>edge_present=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.merge_by_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>After a clustering has been assigned this merges segments that are
+adjasent and of the same group.</p>
+<p>If an edge_confidence has been calculated for the segments than the
+extra condition that the edge value is below the edge_present 
+parameter is requiered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.merge_by_edge">
+<code class="descname">merge_by_edge</code><span class="sig-paren">(</span><em>edge_absent=-1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.merge_by_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>After an edge_confidence hsa been calculated merge any adjasent pairs
+with edge value less than the edge_absent parameter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TSA.merging.Segments.segment_group.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>option='default'</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the specified option on the axis if given. All of these are
+designed to be plotted over the original image, either by passing axis
+with this image already on it or by passing the image array as kwarg
+‘back_img’.</p>
+<p>Valid options are:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>‘both’ or ‘default’</dt>
+<dd>shows the merged segments edges and the original segment edges in a
+different color so what has been merged is clear.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘orig_edges’</dt>
+<dd>shows the original segments edges.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘merged_edges’</dt>
+<dd>shows the merged segments edges.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘cluster’</dt>
+<dd>plots a mask that is transparent only where segments belong to the
+cluster specified by the kwarg ‘cluster’.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘cluster_all’</dt>
+<dd>plots every cluster as above on a multi axis figure. Must give
+back_img kwarg so that it can be put on each subplot.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘segment’ </dt>
+<dd>plots a mask that shades in the segment id given with the kwarg
+‘segment’ a slighly translucent red.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘segment_edge’</dt>
+<dd>plots the edges of the segment id given with the kwarg
+‘segment’. These are colored and labeled different for each
+different neighbouring segment (if a pixel has more than one 
+neighbour segment adjasent it is random which is indicated)</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘edge_conf’</dt>
+<dd>plot every segment edge in a color that represents its edge 
+confidence value.</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pre_post_processing.html" class="btn btn-neutral float-right" title="pre_post_processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="kmeans.html" class="btn btn-neutral float-left" title="kmeans" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Richard Boyne
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
