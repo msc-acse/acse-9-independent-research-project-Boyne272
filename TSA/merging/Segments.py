@@ -4,7 +4,6 @@ from scipy.signal import convolve2d
 from skimage import morphology
 from ..tools import progress_bar
 
-
 # -----------------------------------------------------------------------------
 
 
@@ -36,6 +35,10 @@ class Mask_utilities():
     _laplacian_4 = np.array([[0., 1., 0.],
                             [1., -4., 1.],
                             [0., 1., 0.]])
+    _laplacian_h = np.array([[1., 2., 1.],
+                            [0., 0., 0.],
+                            [-1., -2., -1.]])
+    _laplacian_v = -_laplacian_h.T
     
     def __init__(self, mask, connected=True):
         
@@ -81,27 +84,36 @@ class Mask_utilities():
         return rgba
     
     
-    def _outline(self, diag=True, original=False):
+    def _outline(self, diag=True, original=False, multi=True):
         """
         Take the stored mask and use a laplacian convolution to find the
         outlines for plotting. diag decides if diagonals are to be
         included or not, original decides if the original mask should
-        be used or not. 
-        """
+        be used or not.
         
+        multi is an option to do horizontal, vertical and multi_directional
+        laplacians and combine them. This is a safer method as particular 
+        geometries can trick the above convolution.
+        """
         # select the correcy arrays based on the options given
         lap = self._laplacian_8 if diag else self._laplacian_4
         mask = self.mask if not original else self.orig_mask
         
         # do the convolution to find the edges
-        conv = convolve2d(mask, lap, mode='valid')
+        conv = convolve2d(mask, lap, mode='valid').astype(bool)
+        
+        if multi:
+            conv2 = convolve2d(mask, self._laplacian_h,
+                               mode='valid').astype(bool)
+            conv3 = convolve2d(mask, self._laplacian_v,
+                               mode='valid').astype(bool)
+            conv = (conv + conv2 + conv3).astype(bool)
+        
         
         # pad back boarders to have same shape as original image
         conv = np.pad(conv, 1, 'edge')
         
-        # return where there is not zero gradient
-        zero_grad = np.isclose(conv, 0)
-        return 1. - zero_grad
+        return conv.astype(float)
     
     
     def _enforce_connectivity(self, mask):
@@ -158,6 +170,9 @@ class segment_group(Mask_utilities):
         bar = progress_bar(N)
         print('Initalising %i segments' % N)
         
+        # calculate edges once
+        mask_edges = self._outline()
+        
         # for every segment to create
         for n, i in enumerate(seg_ids):
             
@@ -171,7 +186,7 @@ class segment_group(Mask_utilities):
             # T as we want in form (N, 2)
             
             # find the segments edges (note * works as the & operator)
-            bool_arr = bool_arr * self._outline()
+            bool_arr = bool_arr * mask_edges
             edges = np.array(np.where(bool_arr)[::-1]).T
             
             # create the segments
@@ -288,6 +303,9 @@ class segment_group(Mask_utilities):
                 # average the edge confidence between the two segments
                 edge_conf = np.mean([seg.conf_dict[n_id],
                                      neighbour.conf_dict[_id]])
+                # IF THE CODE BREAKS HERE then seg and neighbour disagree
+                # on wether they are neighbours (asserting this is too much
+                # wasted computation)
                 
                 # if they are of the same cluster and there is no edge
                 if (self.seg_clusters[_id] == self.seg_clusters[n_id] and
