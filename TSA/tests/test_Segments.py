@@ -2,11 +2,8 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Segments import segment_group
-from Segments import Mask_utilities
-
-# from TSA.merging.Segments import segment_group
-# from TSA.merging.Segments import Mask_utilities
+from TSA.merging.Segments import segment_group
+from TSA.merging.Segments import Mask_utilities
 
 
 # -----------------------------------------------------------------------------

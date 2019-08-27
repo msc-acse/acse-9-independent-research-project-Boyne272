@@ -1,8 +1,11 @@
 import unittest
+import os
 import matplotlib.pyplot as plt
 import numpy as np
-from ..tools import get_img
-from Image_processor import Image_processor
+from TSA.tools import get_img
+from TSA.pre_post_processing import Image_processor
+
+
 
 class Test_Image_processor(unittest.TestCase):
     """
@@ -10,12 +13,15 @@ class Test_Image_processor(unittest.TestCase):
     are relativly short.
     """
     
+    test_img_path = os.path.dirname(os.path.abspath(__file__)) + \
+        '/example_white.tif'
+    
     def test_initalisation(self):
         """
         test initalisation and assoiated assertions behave as expected
         """
         
-        path='images/example_white.tif'
+        path = self.test_img_path
         
         # test initalisation with path
         obj = Image_processor(path=path)
@@ -42,7 +48,7 @@ class Test_Image_processor(unittest.TestCase):
         """
         test multiple filters can be stacked together correctly
         """
-        obj = Image_processor('images/example_white.tif')
+        obj = Image_processor(self.test_img_path)
         
         gaussian = obj.gauss()
         sobel_1 = obj.sobel('sob')
@@ -60,7 +66,7 @@ class Test_Image_processor(unittest.TestCase):
         test the utility functions (save, rebase, etc) behave as expected.
         Save is not tested due to complications with removing the created image.
         """
-        obj = Image_processor('images/example_white.tif')
+        obj = Image_processor(self.test_img_path)
         grey = obj.grey_scale()
         obj.reset()
         assert obj.imgs['curr'].ndim == 3, 'image should have been reset'
@@ -84,7 +90,7 @@ class Test_Image_processor(unittest.TestCase):
         need to be validated)
         """
         
-        obj_color = Image_processor('images/example_white.tif')
+        obj_color = Image_processor(self.test_img_path)
         obj_grey = Image_processor(img=obj_color.grey_scale())
         
         # test each multi channel function runs

@@ -10,9 +10,10 @@ Part of the Automated Thin Section Analysis tool set
 import unittest
 import torch
 import matplotlib.pyplot as plt
+import os
 
-from MSLIC import MSLIC_wrapper
-from ..tools import set_seed, get_img
+from TSA.kmeans import MSLIC_wrapper
+from TSA.tools import set_seed, get_img
 
 
 class Test_MSLIC_wrapper(unittest.TestCase):
@@ -22,6 +23,10 @@ class Test_MSLIC_wrapper(unittest.TestCase):
     which is tested below) hence results based tests are not needed
     """
 
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    test_img_path_1 =  dir_path + '/example_white.tif'
+    test_img_path_2 =  dir_path + '/example_polar.tif'
+    
     def test_distance_combination(self):
         """
         test that the img is converetd to vectors correctly and
@@ -29,8 +34,8 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         """
         # setup
         set_seed(10)
-        img_w = get_img("images/example_white.tif")
-        img_p = get_img("images/example_polar.tif")
+        img_w = get_img(self.test_img_path_1)
+        img_p = get_img(self.test_img_path_2)
         obj = MSLIC_wrapper((img_w, img_p), [4, 4])
 
         # find the combined distance
@@ -66,8 +71,8 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         """
         # setup
         set_seed(10)
-        img_w = get_img("images/example_white.tif")
-        img_p = get_img("images/example_polar.tif")
+        img_w = get_img(self.test_img_path_1)
+        img_p = get_img(self.test_img_path_2)
         obj = MSLIC_wrapper((img_w, img_p), [4, 4])
 
         # iterate
@@ -129,8 +134,8 @@ class Test_MSLIC_wrapper(unittest.TestCase):
         """
         # setup
         set_seed(10)
-        img_w = get_img("images/example_white.tif")
-        img_p = get_img("images/example_polar.tif")
+        img_w = get_img(self.test_img_path_1)
+        img_p = get_img(self.test_img_path_2)
         obj = MSLIC_wrapper((img_w, img_p), [4, 4])
 
         # iterate

@@ -9,11 +9,12 @@ Part of the Automated Thin Section Analysis tool set
 
 import unittest
 import torch
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SLIC import SLIC
-from ..tools import set_seed, get_img
+from TSA.kmeans import SLIC
+from TSA.tools import set_seed, get_img
 
 
 class Test_SLIC(unittest.TestCase):
@@ -21,13 +22,16 @@ class Test_SLIC(unittest.TestCase):
     Extensive set of tests for the SLIC class
     """
 
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    test_img_path_1 =  dir_path + '/example_white.tif'
+    
     def test_img_setup(self):
         """
         unit test that the img is converetd to vectors correctly and
         that the adjasent bins list makes sense
         """
         set_seed(10)
-        img = get_img("images/example_white.tif")
+        img = get_img(self.test_img_path_1)
         obj = SLIC(img, [4, 4])
 
         # test the adjecent bins list
@@ -56,7 +60,7 @@ class Test_SLIC(unittest.TestCase):
         unit test that the vectors have been binned correctly and
         clusters initalised correctly
         """
-        img = get_img("images/example_white.tif")
+        img = get_img(self.test_img_path_1)
         obj = SLIC(img, [4, 4])
 
         # test bins
@@ -80,7 +84,7 @@ class Test_SLIC(unittest.TestCase):
         make sense after each of the three processes that make up a
         single iteration.
         """
-        img = get_img("images/example_white.tif")
+        img = get_img(self.test_img_path_1)
         obj = SLIC(img, [4, 4])
 
         # 1 of 3 iteration parts
@@ -135,7 +139,7 @@ class Test_SLIC(unittest.TestCase):
         unit test that the iterate function, mask output and all the plot
         options run without raising any errors
         """
-        img = get_img("images/example_white.tif")
+        img = get_img(self.test_img_path_1)
         img = img[:400, :400, :] # make smaller for faster tests
         obj = SLIC(img, [4, 4])
 
@@ -166,7 +170,7 @@ class Test_SLIC(unittest.TestCase):
         """
 
         # setup object and iterate
-        img_1 = get_img("images/example_white.tif")
+        img_1 = get_img(self.test_img_path_1)
         img_1 = img_1[200:600, 200:600, :] # make smaller for faster test
         obj_1 = SLIC(img_1, [4, 4])
         obj_1.iterate(5)

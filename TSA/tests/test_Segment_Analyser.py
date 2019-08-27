@@ -1,7 +1,7 @@
 import unittest
 import matplotlib.pyplot as plt
 import numpy as np
-from Segment_Analyser import Segment_Analyser
+from TSA.pre_post_processing import Segment_Analyser
 
 class Test_Segment_Analyser(unittest.TestCase):
     """
