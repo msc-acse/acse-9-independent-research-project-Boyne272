@@ -87,7 +87,7 @@ class Segment_Analyser():
         
         # create an axis if not given
         if not ax:
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=[12, 12])
             
         # plot the original image
         ax.imshow(self.img)

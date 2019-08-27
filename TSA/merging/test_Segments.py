@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from Segments import segment_group
 from Segments import Mask_utilities
 
+# from TSA.merging.Segments import segment_group
+# from TSA.merging.Segments import Mask_utilities
+
 
 # -----------------------------------------------------------------------------
 
@@ -88,7 +91,7 @@ class Test_Mask_utilities(unittest.TestCase):
             'Should be the same array'
         
         # check the diag option works as intended
-        outline4 = obj._outline(diag=False)
+        outline4 = obj._outline(diag=False, multi=False)
         assert outline4.sum() == 5, 'expected a cross of size 5'
         assert outline2.sum() == 9, 'expected a box of size 9'
         
