@@ -168,6 +168,8 @@
 <h1>pre_post_processing<a class="headerlink" href="#pre-post-processing" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-TSA.pre_post_processing.Segment_Analyser">
 <span id="segment-analyser"></span><h2>Segment_Analyser<a class="headerlink" href="#module-TSA.pre_post_processing.Segment_Analyser" title="Permalink to this headline">¶</a></h2>
+<p>author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:36:46 2019</p>
 <dl class="class">
 <dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser">
 <em class="property">class </em><code class="descclassname">TSA.pre_post_processing.Segment_Analyser.</code><code class="descname">Segment_Analyser</code><span class="sig-paren">(</span><em>img</em>, <em>mask</em>, <em>clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser" title="Permalink to this definition">¶</a></dt>
@@ -204,11 +206,11 @@ only</dd>
 <dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_gsd">
 <code class="descname">get_gsd</code><span class="sig-paren">(</span><em>label</em>, <em>span=True</em>, <em>return_arr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_gsd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the distribution of segment areas, perimeters and the ratio of
-the two (i.e. the grain size distribution) of the cluster with the 
+the two (i.e. the grain size distribution) of the cluster with the
 given label.</p>
 <p>If span is True this will also plot the span of this clusters segments
 (can be lengthy calculation).</p>
-<p>If return_arr is true then a 2d array array is returned with 
+<p>If return_arr is true then a 2d array array is returned with
 (size, perimeter, ratio) on the first axis and segment on the second.</p>
 </dd></dl>
 
@@ -238,6 +240,8 @@ label is given twice these clusters are merged.</p>
 </div>
 <div class="section" id="module-TSA.pre_post_processing.Image_processor">
 <span id="image-processor"></span><h2>Image_processor<a class="headerlink" href="#module-TSA.pre_post_processing.Image_processor" title="Permalink to this headline">¶</a></h2>
+<p>author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:28:51 2019</p>
 <dl class="class">
 <dt id="TSA.pre_post_processing.Image_processor.Image_processor">
 <em class="property">class </em><code class="descclassname">TSA.pre_post_processing.Image_processor.</code><code class="descname">Image_processor</code><span class="sig-paren">(</span><em>path=''</em>, <em>img=array([]</em>, <em>dtype=float64)</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor" title="Permalink to this definition">¶</a></dt>
@@ -245,7 +249,7 @@ label is given twice these clusters are merged.</p>
 are wrapped around skimage. Use path to load an image from file or
 img to load from an array.</p>
 <p>Image_processor(path=’‘, img=np.array([])</p>
-<p>Images are stored in an internal dictionarry ‘imgs’. The ‘curr’ entry is 
+<p>Images are stored in an internal dictionarry ‘imgs’. The ‘curr’ entry is
 where all filters are applied and the key passed to every method is where
 to store the resultant image. This way many filters can be stacked together
 in ‘curr’ until the final image is stored seperatly under a provided key.</p>
@@ -310,7 +314,7 @@ image (i.e. grey scale image)</p>
 <dl class="method">
 <dt id="TSA.pre_post_processing.Image_processor.Image_processor.laplace">
 <code class="descname">laplace</code><span class="sig-paren">(</span><em>size=3</em>, <em>key='curr'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.laplace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply laplace gradient filters of the given size on single or 
+<dd><p>Apply laplace gradient filters of the given size on single or
 multi-chanel images</p>
 </dd></dl>
 
@@ -336,7 +340,7 @@ kwargs passed to skimage.filters.median</p>
 
 <dl class="method">
 <dt id="TSA.pre_post_processing.Image_processor.Image_processor.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>key='curr'</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Image_processor.Image_processor.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot an image</p>
 </dd></dl>
 

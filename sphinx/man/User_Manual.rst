@@ -2,13 +2,22 @@
 User Manual
 ===========
 
-Created by Richard Boyne (rmb115@ic.ac.uk) on 29th August 2019
+Instillation and usage instructions for the Thin Section Analysis (TSA)
+python package.
 
-Download Code
--------------
+Created by Richard Boyne (rmb115@ic.ac.uk) on 25th August 2019
 
-If not already present this clones the repo into google colab. If all
-packages are already locally present this is not needed.
+Downloads
+---------
+
+The software is kept in the github repo:
+https://github.com/msc-acse/acse-9-independent-research-project-Boyne272.git
+
+It contains a setup.py for instillation and all code is kept in the TSA
+directory.
+
+The following code will clones the repo locally (checked in google
+colab).
 
 .. code:: ipython3
 
@@ -16,7 +25,7 @@ packages are already locally present this is not needed.
     from gettext import gettext
     import os
     
-    # if we have not already cloned before
+    # if we have not already in a repo
     if not os.path.isdir(".git"):
         
         # get username and password
@@ -29,40 +38,126 @@ packages are already locally present this is not needed.
         %cd TSA_repo
     
         # swap to the wanted branch
-        !git checkout master --quiet
+        !git checkout Release --quiet
     
     # show where we are
     !git show --summary
 
-Install Module
---------------
 
-To install the module the requierments need first be installed, this can
-be done with
+.. parsed-literal::
+
+    github username: Boyne272
+    github password: ··········
+    /content/TSA_repo
+    [33mcommit bc2b4667f6905c3795451de25b9d98438e3e401b[m[33m ([m[1;36mHEAD -> [m[1;32mRelease[m[33m, [m[1;31morigin/Release[m[33m)[m
+    Author: Richard Boyne <boynerichard@yahoo.co.uk>
+    Date:   Tue Aug 27 14:16:50 2019 +0000
+    
+        moved all old code out of the TSA pack folder
+        
+        now it is not brought in when installing, still kept around as might be useful
+    
+     delete mode 100644 TSA/merging/legacy/tools.py
+     rename {TSA/kmeans/legacy => notebooks/older_code}/Kmeans_Examples.ipynb (100%)
+     rename {TSA/merging/legacy => notebooks/older_code}/image_filters.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/kmeans_basic.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/kmeans_img.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/kmeans_local.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/kmeans_local_failed.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/kmeans_multi_fail.py (100%)
+     rename {TSA/merging/legacy => notebooks/older_code}/merge_wrapper.py (100%)
+     rename {TSA/merging/legacy => notebooks/older_code}/merge_wrapper_failed.py (100%)
+     rename {TSA/merging/legacy => notebooks/older_code}/preprocessing.py (100%)
+     rename {TSA/merging/legacy => notebooks/older_code}/recombination_wrapper.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/tools.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/tst_kmeans_basic.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/tst_kmeans_img.py (100%)
+     rename {TSA/kmeans/legacy => notebooks/older_code}/tst_kmeans_local.py (100%)
+    
+
+Installation
+------------
+
+To install the module first the requierments need be installed, this can
+be done with.
 
 .. code:: ipython3
 
     !pip install -r requirements.txt
 
-Now to install the moudle use pip install
+
+.. parsed-literal::
+
+    Requirement already satisfied: numpy==1.16.4 in /usr/local/lib/python3.6/dist-packages (from -r requirements.txt (line 1)) (1.16.4)
+    Requirement already satisfied: matplotlib==3.0.3 in /usr/local/lib/python3.6/dist-packages (from -r requirements.txt (line 2)) (3.0.3)
+    Requirement already satisfied: scipy==1.3.1 in /usr/local/lib/python3.6/dist-packages (from -r requirements.txt (line 3)) (1.3.1)
+    Requirement already satisfied: torch==1.1.0 in /usr/local/lib/python3.6/dist-packages (from -r requirements.txt (line 4)) (1.1.0)
+    Requirement already satisfied: scikit-image==0.15.0 in /usr/local/lib/python3.6/dist-packages (from -r requirements.txt (line 5)) (0.15.0)
+    Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib==3.0.3->-r requirements.txt (line 2)) (1.1.0)
+    Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib==3.0.3->-r requirements.txt (line 2)) (2.4.2)
+    Requirement already satisfied: python-dateutil>=2.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib==3.0.3->-r requirements.txt (line 2)) (2.5.3)
+    Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib==3.0.3->-r requirements.txt (line 2)) (0.10.0)
+    Requirement already satisfied: PyWavelets>=0.4.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image==0.15.0->-r requirements.txt (line 5)) (1.0.3)
+    Requirement already satisfied: pillow>=4.3.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image==0.15.0->-r requirements.txt (line 5)) (4.3.0)
+    Requirement already satisfied: networkx>=2.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image==0.15.0->-r requirements.txt (line 5)) (2.3)
+    Requirement already satisfied: imageio>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from scikit-image==0.15.0->-r requirements.txt (line 5)) (2.4.1)
+    Requirement already satisfied: setuptools in /usr/local/lib/python3.6/dist-packages (from kiwisolver>=1.0.1->matplotlib==3.0.3->-r requirements.txt (line 2)) (41.2.0)
+    Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil>=2.1->matplotlib==3.0.3->-r requirements.txt (line 2)) (1.12.0)
+    Requirement already satisfied: olefile in /usr/local/lib/python3.6/dist-packages (from pillow>=4.3.0->scikit-image==0.15.0->-r requirements.txt (line 5)) (0.46)
+    Requirement already satisfied: decorator>=4.3.0 in /usr/local/lib/python3.6/dist-packages (from networkx>=2.0->scikit-image==0.15.0->-r requirements.txt (line 5)) (4.4.0)
+    
+
+Now to install the moudle use pip install in the directory where the
+setup.py file is.
 
 .. code:: ipython3
 
-    pip install .
+    pip install . # if currently in the repo
+
+
+.. parsed-literal::
+
+    Processing /content/TSA_repo
+    Requirement already satisfied: numpy in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.16.4)
+    Requirement already satisfied: matplotlib in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (3.0.3)
+    Requirement already satisfied: scipy in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.3.1)
+    Requirement already satisfied: torch in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.1.0)
+    Requirement already satisfied: scikit-image in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (0.15.0)
+    Requirement already satisfied: python-dateutil>=2.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib->TSA==1.0.0) (2.5.3)
+    Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib->TSA==1.0.0) (1.1.0)
+    Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib->TSA==1.0.0) (0.10.0)
+    Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib->TSA==1.0.0) (2.4.2)
+    Requirement already satisfied: PyWavelets>=0.4.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image->TSA==1.0.0) (1.0.3)
+    Requirement already satisfied: imageio>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from scikit-image->TSA==1.0.0) (2.4.1)
+    Requirement already satisfied: networkx>=2.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image->TSA==1.0.0) (2.3)
+    Requirement already satisfied: pillow>=4.3.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image->TSA==1.0.0) (4.3.0)
+    Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil>=2.1->matplotlib->TSA==1.0.0) (1.12.0)
+    Requirement already satisfied: setuptools in /usr/local/lib/python3.6/dist-packages (from kiwisolver>=1.0.1->matplotlib->TSA==1.0.0) (41.2.0)
+    Requirement already satisfied: decorator>=4.3.0 in /usr/local/lib/python3.6/dist-packages (from networkx>=2.0->scikit-image->TSA==1.0.0) (4.4.0)
+    Requirement already satisfied: olefile in /usr/local/lib/python3.6/dist-packages (from pillow>=4.3.0->scikit-image->TSA==1.0.0) (0.46)
+    Building wheels for collected packages: TSA
+      Building wheel for TSA (setup.py) ... [?25l[?25hdone
+      Created wheel for TSA: filename=TSA-1.0.0-cp36-none-any.whl size=41155 sha256=2476c8a3c458cc47319eb35aba98ba8bcdd32d8c52c9f221d6d3f686c918e8ed
+      Stored in directory: /tmp/pip-ephem-wheel-cache-1u2763_c/wheels/ea/a3/39/2504a755f1161b16e6d23f984250c40e18af62f819ed7d4951
+    Successfully built TSA
+    Installing collected packages: TSA
+    Successfully installed TSA-1.0.0
+    
 
 Alternativly the direcory TSA can be place locally where it is needed
 and imported just as if it had been installed
 
-Run Tests
----------
+Running Test Suites
+-------------------
 
-All tests are contained in the modules directory next to the .py files
-themselves. Pytest is able to pick up on them, alternativly test file
-will work if run by itself.
+All tests are contained in the modules directory, in the tests folder.
+Pytest is able to pick up on them, alternativly any test file will work
+if run by itself. Some of the tests requier the test images which are
+also in in the test folder.
 
 .. code:: ipython3
 
-    !pytest # last run 23rd Aug
+    !pytest # last run 27th Aug 2019
 
 
 .. parsed-literal::
@@ -72,14 +167,14 @@ will work if run by itself.
     rootdir: /content/TSA_repo, inifile:
     collected 24 items                                                             [0m
     
-    TSA/kmeans/test_MSLIC.py ...[36m                                             [ 12%][0m
-    TSA/kmeans/test_SLIC.py .....[36m                                            [ 33%][0m
-    TSA/merging/test_AGNES.py ...[36m                                            [ 45%][0m
-    TSA/merging/test_Segments.py ........[36m                                    [ 79%][0m
-    TSA/pre_post_processing/test_Image_processor.py ....[36m                     [ 95%][0m
-    TSA/pre_post_processing/test_Segment_Analyser.py .[36m                       [100%][0m
+    TSA/tests/test_AGNES.py ...[36m                                              [ 12%][0m
+    TSA/tests/test_Image_processor.py ....[36m                                   [ 29%][0m
+    TSA/tests/test_MSLIC.py ...[36m                                              [ 41%][0m
+    TSA/tests/test_SLIC.py .....[36m                                             [ 62%][0m
+    TSA/tests/test_Segment_Analyser.py .[36m                                     [ 66%][0m
+    TSA/tests/test_Segments.py ........[36m                                      [100%][0m
     
-    [32m[1m========================== 24 passed in 81.74 seconds ==========================[0m
+    [32m[1m========================== 24 passed in 84.44 seconds ==========================[0m
     
 
 Example: Butterfly Segmentation
@@ -95,7 +190,7 @@ Example: Butterfly Segmentation
     import numpy as np
     import pandas as pd 
     
-    # custom imports
+    # TAS imports
     from TSA.pre_post_processing import Image_processor
     from TSA.pre_post_processing import Segment_Analyser
     from TSA.merging import AGNES
@@ -141,7 +236,7 @@ Now we can look at what SLIC manages to do with this.
 
 .. parsed-literal::
 
-    Progress |###################################################| 87.9820 s
+    Progress |###################################################| 85.1418 s
 
 
 .. image:: output_17_1.png
@@ -171,7 +266,7 @@ be more segments than in the above image.
 .. parsed-literal::
 
     Initalising 641 segments
-    Progress |###################################################| 56.7263 s
+    Progress |###################################################| 13.8670 s
     
     
 
@@ -191,7 +286,7 @@ merge with there largest neighbour with segment\_group.
 
     13 segments merged
     Initalising 65 segments
-    Progress |###################################################| 5.4610 s
+    Progress |###################################################| 1.6826 s
     
     
 
@@ -314,7 +409,7 @@ segments by common features. Here we are using the AGNES clustering
 
 .. parsed-literal::
 
-    Progress |###################################################| 0.3544 s
+    Progress |###################################################| 0.3728 s
     
     
 
@@ -433,7 +528,7 @@ also merge without clusters and just edge confidence instead.
 
     412 segments merged
     Initalising 113 segments
-    Progress |###################################################| 9.5287 s
+    Progress |###################################################| 3.0159 s
     
     
 
@@ -479,7 +574,9 @@ mask and clustering mask.
 We can then label each cluster as something more appropirate for the
 analysis. If we think two clusters are actually part of the same
 material we give them both the same label and the clusters are grouped.
-Here we will just label with sky, wing or flower for simplicity.
+Here we will just label with sky, wing or flower for simplicity. Note
+that even within this relativly coarse labelling there are still regions
+of conflict where segments of say wing and sky are clustered together.
 
 .. code:: ipython3
 
@@ -538,7 +635,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  4 
     Give a new label (leave blank to unchange):
-    flower
+    flower core
     
 
 
@@ -560,7 +657,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  6 
     Give a new label (leave blank to unchange):
-    flower
+    flower petal
     
 
 
@@ -571,7 +668,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  7 
     Give a new label (leave blank to unchange):
-    flower
+    flower petal
     
 
 
@@ -604,7 +701,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  10 
     Give a new label (leave blank to unchange):
-    flower
+    flower petal
     
 
 
@@ -615,7 +712,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  11 
     Give a new label (leave blank to unchange):
-    flower
+    flower petal
     
 
 
@@ -626,7 +723,7 @@ Here we will just label with sky, wing or flower for simplicity.
 
     Currently labelled  12 
     Give a new label (leave blank to unchange):
-    flower
+    flower petal
     
 
 
@@ -638,14 +735,11 @@ Here we will just label with sky, wing or flower for simplicity.
     Currently labelled  13 
     Give a new label (leave blank to unchange):
     wing
-    Current Labels: ['wing', 'flower', 'sky']
+    Current Labels: ['wing', 'flower core', 'sky', 'flower petal']
     
 
 Since the clusters are now labeled we can look at the overall (final)
 segmentation.
-
-Note the following plot function chooses colors randomly so you might
-need to run a few times to get a clear image.
 
 .. code:: ipython3
 
@@ -671,12 +765,14 @@ We can see the distributions of each cluster as well.
 
     Tabel of Compositions
     20.56 %	 wing
-    21.87 %	 flower
+    0.95 %	 flower core
     57.57 %	 sky
+    20.92 %	 flower petal
     Tabel of Grain Count
     130 	 wing
-    42 	 flower
+    2 	 flower core
     44 	 sky
+    40 	 flower petal
     
 
 
@@ -690,19 +786,21 @@ We can see the distributions of each cluster as well.
 .. code:: ipython3
 
     # these take slighly longer to find
-    for label in ['sky', 'wing', 'flower']:
+    for label in ['sky', 'wing', 'flower core', 'flower petal']:
         butterfly_SA.get_gsd(label)
 
 
 .. parsed-literal::
 
-    Progress |###################################################| 3.0971 scalculating span
+    Progress |###################################################| 2.9440 scalculating span
     
-    Progress |###################################################| 9.3110 scalculating span
+    Progress |###################################################| 8.7556 scalculating span
     
-    Progress |###################################################| 2.9703 scalculating span
+    Progress |###################################################| 0.0686 scalculating span
     
-    Progress |###################################################| 3.2278 s
+    Progress |###################################################| 2.7868 scalculating span
+    
+    Progress |###################################################| 3.0739 s
 
 
 .. image:: output_47_1.png
@@ -714,6 +812,10 @@ We can see the distributions of each cluster as well.
 
 
 .. image:: output_47_3.png
+
+
+
+.. image:: output_47_4.png
 
 
 If any of the results want to be further analysed than an option
