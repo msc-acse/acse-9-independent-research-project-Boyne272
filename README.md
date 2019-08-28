@@ -1,33 +1,26 @@
 # Automated Thin Section Analysis
-#### MSc Applied Computational Science and Engineering
-#### Independent Research Project
-#### Richard Boyne 
-Github: Boyne272
+-MSc Applied Computational Science and Engineering
+-Independent Research Project
+-Richard Boyne 
+-Github: Boyne272
+-CID: 01057503
 
-CID: 01057503
+This repo holds the Thin Section Analysis (TSA) python package. Full documentation and user manual available [here](https://boyne272.github.io/acse-9-independent-research-project-Boyne272/index.html) (via forked repo)
+
 
 ## Repository Structure
-- images/ holds a few sample images which are cropped versions of a whole thin section images. The main images used in this project are not stored in this repo due to data right's restrictions 
-- masks/ holds vairaous segmentation masks of the sample images
-- kmeans/ holds the vairious versions of the oversegmentation methods by kmeans, also has 'Kmeans_Examples.ipynb' where all kmeans figures and examples have been generated
-- merging/ holds the vairious versions of the recombination methods, also has the 'Recombination_Examples.ipynb' where all recombination figures and examples have been generated
-- 'Peliminary Report Richard Boyne.pdf' is the project plan, submitted on the 5th of June 2019
-- 'Thin_Sections_Workspace.ipynb' is the notebook used in google collab as a basic development environment (as local machines do have git bash)
+- TSA/ is the module directory, holding the submodule code (K-means, merging, pre_post_processing, tools) and tests for all these. pip in the repo will use setup.py to install this module and pytest will run all module tests (see user manual for more detailed instructions).
+- images/ holds a several sample (1000x1000) TS image sections. These were used to collect results for the final report.
+- docs/ holds sphinx generated documentation in HTML format. Due to admin restrictions on this repository's settings the repo has been forked to host the documentation via GitHub pages.
+- sphinx/ holds the code used to generate the documentation in docs/.
+- notebooks/ holds all notebooks used to develop and run the given code (in the [Google Colab environment](https://colab.research.google.com/notebooks/welcome.ipynb#recent=true)). This includes Thin_Sections_Workspace.ipynb used to develop and experiment with code, Results.iypnb which generates all figures and values used in the report and User_manual.ipynb which is an interactive version of the user manual found on the documentation page.
+- Preliminary Report Richard Boyne.pdf and Final Report Richard Boyne.pdf are the project plan and report (submitted 5th June and 30th August respectively)
 
 
-## Implementation notes
-The oversegmentation by kmeans uses a binned meshgrid to search on as this both forces locality on the segmentations of the system and dramatically speeds up the algorithm when varying the number of segments (double the kmeans centers only increase the runtime by ~15%). This is a key part to the SLIC algorithm. 
-
-Although rough locality is forced there is nothing ensuring segments are fully connected, which is particularly significant for rock grains with spot like patters as they are often picked out in xyrgb space to be in a neighbouring segement. As such a method for checking connectivity and dealing with it appopirately is needed.
-
-Recombination metrics have been chosen by . . . . . .
-
-
-## Code structure
-The kmeans code is built on an inherited class system; where by the bin mesh, distance metrics and image feature conversion are handeled by parent classes. This means that the kmeans_local class will not need changing to work for more complicated versions of the algorithms.
-
-The recombination code structure works by making segment class instances which identify their edges, which neighbours they are with and then calculate metrics by which to combine. To make the process of combination not too complex, the whole image is scaned then all segments to merge are merged, preventing the need for figuring out which segments neighbours have changed, etc. After the first scan segments instances are reinitalised which is inefficent in terms of overhead but allows for the recycling of code for a more elegent overall structure. Since the number of segments in this algorithm is always going to small compared to the kmeans seperation method the optimisation of this algorithm is less significant, however if the run time becomes an issue this will be readdressed.
-
+## Installation
+Refer to the documentation for instructions on how to install the package. Alternatively if notebooks/User_manual.ipynb is loaded into Google Colab one can use the entire package from there. One can also download the repository and open these notebooks locally, but you must then take caution with file paths in the installation and example codes.
 
 ## Notes to the Examiner
-enjoy :)
+As the User_manual.ipynb is in the documentation page you can view it from there as GitHub online notebook viewer often struggles with large notebooks. If you need to run the code I recommend using the User_manual.ipynb in Google Colab as described above. Hope the repo and code are clear to follow. As always here is an appropriate meme :p
+
+![TS meme to lighten the mood](images/meme.jpg "TS meme to lighten the mood")
