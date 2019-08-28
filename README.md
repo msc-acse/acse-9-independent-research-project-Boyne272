@@ -1,9 +1,8 @@
 # Automated Thin Section Analysis
--MSc Applied Computational Science and Engineering
--Independent Research Project
--Richard Boyne 
--Github: Boyne272
--CID: 01057503
+
+Independent Research Project for MSc Applied Computational Science and Engineering
+
+Richard Boyne (GitHub: Boyne272, CID: 01057503, email: rmb115@ic.ac.uk)
 
 This repo holds the Thin Section Analysis (TSA) python package. Full documentation and user manual available [here](https://boyne272.github.io/acse-9-independent-research-project-Boyne272/index.html) (via forked repo)
 
