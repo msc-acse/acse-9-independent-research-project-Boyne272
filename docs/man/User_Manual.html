@@ -83,9 +83,9 @@
               <p class="caption"><span class="caption-text">Guides:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Manual</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#download-code">Download Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-module">Install Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-tests">Run Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloads">Downloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-test-suites">Running Test Suites</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#example-butterfly-segmentation">Example: Butterfly Segmentation</a><ul>
@@ -176,16 +176,22 @@
             
   <div class="section" id="user-manual">
 <h1>User Manual<a class="headerlink" href="#user-manual" title="Permalink to this headline">¶</a></h1>
-<p>Created by Richard Boyne (<a class="reference external" href="mailto:rmb115&#37;&#52;&#48;ic&#46;ac&#46;uk">rmb115<span>&#64;</span>ic<span>&#46;</span>ac<span>&#46;</span>uk</a>) on 29th August 2019</p>
-<div class="section" id="download-code">
-<h2>Download Code<a class="headerlink" href="#download-code" title="Permalink to this headline">¶</a></h2>
-<p>If not already present this clones the repo into google colab. If all
-packages are already locally present this is not needed.</p>
+<p>Instillation and usage instructions for the Thin Section Analysis (TSA)
+python package.</p>
+<p>Created by Richard Boyne (<a class="reference external" href="mailto:rmb115&#37;&#52;&#48;ic&#46;ac&#46;uk">rmb115<span>&#64;</span>ic<span>&#46;</span>ac<span>&#46;</span>uk</a>) on 25th August 2019</p>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<p>The software is kept in the github repo:
+<a class="reference external" href="https://github.com/msc-acse/acse-9-independent-research-project-Boyne272.git">https://github.com/msc-acse/acse-9-independent-research-project-Boyne272.git</a></p>
+<p>It contains a setup.py for instillation and all code is kept in the TSA
+directory.</p>
+<p>The following code will clones the repo locally (checked in google
+colab).</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span>from getpass import getpass
 from gettext import gettext
 import os
 
-# if we have not already cloned before
+# if we have not already in a repo
 if not os.path.isdir(&quot;.git&quot;):
 
     # get username and password
@@ -198,33 +204,110 @@ if not os.path.isdir(&quot;.git&quot;):
     %cd TSA_repo
 
     # swap to the wanted branch
-    !git checkout master --quiet
+    !git checkout Release --quiet
 
 # show where we are
 !git show --summary
 </pre></div>
 </div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>github username: Boyne272
+github password: ··········
+/content/TSA_repo
+[33mcommit bc2b4667f6905c3795451de25b9d98438e3e401b[m[33m ([m[1;36mHEAD -&gt; [m[1;32mRelease[m[33m, [m[1;31morigin/Release[m[33m)[m
+Author: Richard Boyne &lt;boynerichard@yahoo.co.uk&gt;
+Date:   Tue Aug 27 14:16:50 2019 +0000
+
+    moved all old code out of the TSA pack folder
+
+    now it is not brought in when installing, still kept around as might be useful
+
+ delete mode 100644 TSA/merging/legacy/tools.py
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/Kmeans_Examples.ipynb (100%)
+ rename {TSA/merging/legacy =&gt; notebooks/older_code}/image_filters.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/kmeans_basic.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/kmeans_img.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/kmeans_local.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/kmeans_local_failed.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/kmeans_multi_fail.py (100%)
+ rename {TSA/merging/legacy =&gt; notebooks/older_code}/merge_wrapper.py (100%)
+ rename {TSA/merging/legacy =&gt; notebooks/older_code}/merge_wrapper_failed.py (100%)
+ rename {TSA/merging/legacy =&gt; notebooks/older_code}/preprocessing.py (100%)
+ rename {TSA/merging/legacy =&gt; notebooks/older_code}/recombination_wrapper.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/tools.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/tst_kmeans_basic.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/tst_kmeans_img.py (100%)
+ rename {TSA/kmeans/legacy =&gt; notebooks/older_code}/tst_kmeans_local.py (100%)
+</pre></div>
 </div>
-<div class="section" id="install-module">
-<h2>Install Module<a class="headerlink" href="#install-module" title="Permalink to this headline">¶</a></h2>
-<p>To install the module the requierments need first be installed, this can
-be done with</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install the module first the requierments need be installed, this can
+be done with.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install -r requirements.txt
 </pre></div>
 </div>
-<p>Now to install the moudle use pip install</p>
-<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">numpy</span><span class="o">==</span><span class="mf">1.16</span><span class="o">.</span><span class="mi">4</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">1</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.16</span><span class="o">.</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">scipy</span><span class="o">==</span><span class="mf">1.3</span><span class="o">.</span><span class="mi">1</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">3</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.3</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">torch</span><span class="o">==</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">4</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">kiwisolver</span><span class="o">&gt;=</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">pyparsing</span><span class="o">!=</span><span class="mf">2.0</span><span class="o">.</span><span class="mi">4</span><span class="p">,</span><span class="o">!=</span><span class="mf">2.1</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">!=</span><span class="mf">2.1</span><span class="o">.</span><span class="mi">6</span><span class="p">,</span><span class="o">&gt;=</span><span class="mf">2.0</span><span class="o">.</span><span class="mi">1</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">python</span><span class="o">-</span><span class="n">dateutil</span><span class="o">&gt;=</span><span class="mf">2.1</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">cycler</span><span class="o">&gt;=</span><span class="mf">0.10</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">0.10</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">PyWavelets</span><span class="o">&gt;=</span><span class="mf">0.4</span><span class="o">.</span><span class="mi">0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">pillow</span><span class="o">&gt;=</span><span class="mf">4.3</span><span class="o">.</span><span class="mi">0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">4.3</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">networkx</span><span class="o">&gt;=</span><span class="mf">2.0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">2.3</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">imageio</span><span class="o">&gt;=</span><span class="mf">2.0</span><span class="o">.</span><span class="mi">1</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">setuptools</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">kiwisolver</span><span class="o">&gt;=</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">1</span><span class="o">-&gt;</span><span class="n">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">41.2</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">six</span><span class="o">&gt;=</span><span class="mf">1.5</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">python</span><span class="o">-</span><span class="n">dateutil</span><span class="o">&gt;=</span><span class="mf">2.1</span><span class="o">-&gt;</span><span class="n">matplotlib</span><span class="o">==</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">3</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">2</span><span class="p">))</span> <span class="p">(</span><span class="mf">1.12</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">olefile</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">pillow</span><span class="o">&gt;=</span><span class="mf">4.3</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;</span><span class="n">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">0.46</span><span class="p">)</span>
+<span class="n">Requirement</span> <span class="n">already</span> <span class="n">satisfied</span><span class="p">:</span> <span class="n">decorator</span><span class="o">&gt;=</span><span class="mf">4.3</span><span class="o">.</span><span class="mi">0</span> <span class="ow">in</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">networkx</span><span class="o">&gt;=</span><span class="mf">2.0</span><span class="o">-&gt;</span><span class="n">scikit</span><span class="o">-</span><span class="n">image</span><span class="o">==</span><span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-&gt;-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span> <span class="p">(</span><span class="n">line</span> <span class="mi">5</span><span class="p">))</span> <span class="p">(</span><span class="mf">4.4</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now to install the moudle use pip install in the directory where the
+setup.py file is.</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span> <span class="c1"># if currently in the repo</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Processing /content/TSA_repo
+Requirement already satisfied: numpy in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.16.4)
+Requirement already satisfied: matplotlib in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (3.0.3)
+Requirement already satisfied: scipy in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.3.1)
+Requirement already satisfied: torch in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (1.1.0)
+Requirement already satisfied: scikit-image in /usr/local/lib/python3.6/dist-packages (from TSA==1.0.0) (0.15.0)
+Requirement already satisfied: python-dateutil&gt;=2.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib-&gt;TSA==1.0.0) (2.5.3)
+Requirement already satisfied: kiwisolver&gt;=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib-&gt;TSA==1.0.0) (1.1.0)
+Requirement already satisfied: cycler&gt;=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib-&gt;TSA==1.0.0) (0.10.0)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib-&gt;TSA==1.0.0) (2.4.2)
+Requirement already satisfied: PyWavelets&gt;=0.4.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image-&gt;TSA==1.0.0) (1.0.3)
+Requirement already satisfied: imageio&gt;=2.0.1 in /usr/local/lib/python3.6/dist-packages (from scikit-image-&gt;TSA==1.0.0) (2.4.1)
+Requirement already satisfied: networkx&gt;=2.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image-&gt;TSA==1.0.0) (2.3)
+Requirement already satisfied: pillow&gt;=4.3.0 in /usr/local/lib/python3.6/dist-packages (from scikit-image-&gt;TSA==1.0.0) (4.3.0)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil&gt;=2.1-&gt;matplotlib-&gt;TSA==1.0.0) (1.12.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/dist-packages (from kiwisolver&gt;=1.0.1-&gt;matplotlib-&gt;TSA==1.0.0) (41.2.0)
+Requirement already satisfied: decorator&gt;=4.3.0 in /usr/local/lib/python3.6/dist-packages (from networkx&gt;=2.0-&gt;scikit-image-&gt;TSA==1.0.0) (4.4.0)
+Requirement already satisfied: olefile in /usr/local/lib/python3.6/dist-packages (from pillow&gt;=4.3.0-&gt;scikit-image-&gt;TSA==1.0.0) (0.46)
+Building wheels for collected packages: TSA
+  Building wheel for TSA (setup.py) ... [?25l[?25hdone
+  Created wheel for TSA: filename=TSA-1.0.0-cp36-none-any.whl size=41155 sha256=2476c8a3c458cc47319eb35aba98ba8bcdd32d8c52c9f221d6d3f686c918e8ed
+  Stored in directory: /tmp/pip-ephem-wheel-cache-1u2763_c/wheels/ea/a3/39/2504a755f1161b16e6d23f984250c40e18af62f819ed7d4951
+Successfully built TSA
+Installing collected packages: TSA
+Successfully installed TSA-1.0.0
 </pre></div>
 </div>
 <p>Alternativly the direcory TSA can be place locally where it is needed
 and imported just as if it had been installed</p>
 </div>
-<div class="section" id="run-tests">
-<h2>Run Tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
-<p>All tests are contained in the modules directory next to the .py files
-themselves. Pytest is able to pick up on them, alternativly test file
-will work if run by itself.</p>
-<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span>!pytest # last run 23rd Aug
+<div class="section" id="running-test-suites">
+<h2>Running Test Suites<a class="headerlink" href="#running-test-suites" title="Permalink to this headline">¶</a></h2>
+<p>All tests are contained in the modules directory, in the tests folder.
+Pytest is able to pick up on them, alternativly any test file will work
+if run by itself. Some of the tests requier the test images which are
+also in in the test folder.</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span>!pytest # last run 27th Aug 2019
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[1m============================= test session starts ==============================[0m
@@ -232,14 +315,14 @@ platform linux2 -- Python 2.7.15+, pytest-3.6.4, py-1.8.0, pluggy-0.7.1
 rootdir: /content/TSA_repo, inifile:
 collected 24 items                                                             [0m
 
-TSA/kmeans/test_MSLIC.py ...[36m                                             [ 12%][0m
-TSA/kmeans/test_SLIC.py .....[36m                                            [ 33%][0m
-TSA/merging/test_AGNES.py ...[36m                                            [ 45%][0m
-TSA/merging/test_Segments.py ........[36m                                    [ 79%][0m
-TSA/pre_post_processing/test_Image_processor.py ....[36m                     [ 95%][0m
-TSA/pre_post_processing/test_Segment_Analyser.py .[36m                       [100%][0m
+TSA/tests/test_AGNES.py ...[36m                                              [ 12%][0m
+TSA/tests/test_Image_processor.py ....[36m                                   [ 29%][0m
+TSA/tests/test_MSLIC.py ...[36m                                              [ 41%][0m
+TSA/tests/test_SLIC.py .....[36m                                             [ 62%][0m
+TSA/tests/test_Segment_Analyser.py .[36m                                     [ 66%][0m
+TSA/tests/test_Segments.py ........[36m                                      [100%][0m
 
-[32m[1m========================== 24 passed in 81.74 seconds ==========================[0m
+[32m[1m========================== 24 passed in 84.44 seconds ==========================[0m
 </pre></div>
 </div>
 </div>
@@ -254,7 +337,7 @@ TSA/pre_post_processing/test_Segment_Analyser.py .[36m                       [1
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="c1"># custom imports</span>
+<span class="c1"># TAS imports</span>
 <span class="kn">from</span> <span class="nn">TSA.pre_post_processing</span> <span class="k">import</span> <span class="n">Image_processor</span>
 <span class="kn">from</span> <span class="nn">TSA.pre_post_processing</span> <span class="k">import</span> <span class="n">Segment_Analyser</span>
 <span class="kn">from</span> <span class="nn">TSA.merging</span> <span class="k">import</span> <span class="n">AGNES</span>
@@ -287,7 +370,7 @@ clur the image slightly, this quite easy to do with Image_processor.</p>
 <span class="n">butterfly_SLIC</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 87.9820 s</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 85.1418 s</span>
 </pre></div>
 </div>
 <img alt="../_images/output_17_1.png" src="../_images/output_17_1.png" />
@@ -310,7 +393,7 @@ be more segments than in the above image.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Initalising</span> <span class="mi">641</span> <span class="n">segments</span>
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 56.7263 s</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 13.8670 s</span>
 </pre></div>
 </div>
 <img alt="../_images/output_19_1.png" src="../_images/output_19_1.png" />
@@ -321,7 +404,7 @@ merge with there largest neighbour with segment_group.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">13</span> <span class="n">segments</span> <span class="n">merged</span>
 <span class="n">Initalising</span> <span class="mi">65</span> <span class="n">segments</span>
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 5.4610 s</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 1.6826 s</span>
 </pre></div>
 </div>
 <p>Notice how only 65 segments were recreated; since those with unchanging
@@ -426,7 +509,7 @@ segments by common features. Here we are using the AGNES clustering</p>
 <span class="n">butterly_AGNES</span><span class="o">.</span><span class="n">cluster_distance_plot</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 0.3544 s</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 0.3728 s</span>
 </pre></div>
 </div>
 <img alt="../_images/output_25_1.png" src="../_images/output_25_1.png" />
@@ -510,7 +593,7 @@ also merge without clusters and just edge confidence instead.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">412</span> <span class="n">segments</span> <span class="n">merged</span>
 <span class="n">Initalising</span> <span class="mi">113</span> <span class="n">segments</span>
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 9.5287 s</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 3.0159 s</span>
 </pre></div>
 </div>
 <img alt="../_images/output_37_1.png" src="../_images/output_37_1.png" />
@@ -546,7 +629,9 @@ mask and clustering mask.</p>
 <p>We can then label each cluster as something more appropirate for the
 analysis. If we think two clusters are actually part of the same
 material we give them both the same label and the clusters are grouped.
-Here we will just label with sky, wing or flower for simplicity.</p>
+Here we will just label with sky, wing or flower for simplicity. Note
+that even within this relativly coarse labelling there are still regions
+of conflict where segments of say wing and sky are clustered together.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">butterfly_SA</span><span class="o">.</span><span class="n">set_labels</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -577,7 +662,7 @@ Here we will just label with sky, wing or flower for simplicity.</p>
 <img alt="../_images/output_42_8.png" src="../_images/output_42_8.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">4</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">core</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_10.png" src="../_images/output_42_10.png" />
@@ -589,13 +674,13 @@ Here we will just label with sky, wing or flower for simplicity.</p>
 <img alt="../_images/output_42_12.png" src="../_images/output_42_12.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">6</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_14.png" src="../_images/output_42_14.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">7</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_16.png" src="../_images/output_42_16.png" />
@@ -613,32 +698,30 @@ Here we will just label with sky, wing or flower for simplicity.</p>
 <img alt="../_images/output_42_20.png" src="../_images/output_42_20.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">10</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_22.png" src="../_images/output_42_22.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">11</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_24.png" src="../_images/output_42_24.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">12</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
-<span class="n">flower</span>
+<span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_42_26.png" src="../_images/output_42_26.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Currently</span> <span class="n">labelled</span>  <span class="mi">13</span>
 <span class="n">Give</span> <span class="n">a</span> <span class="n">new</span> <span class="n">label</span> <span class="p">(</span><span class="n">leave</span> <span class="n">blank</span> <span class="n">to</span> <span class="n">unchange</span><span class="p">):</span>
 <span class="n">wing</span>
-<span class="n">Current</span> <span class="n">Labels</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;wing&#39;</span><span class="p">,</span> <span class="s1">&#39;flower&#39;</span><span class="p">,</span> <span class="s1">&#39;sky&#39;</span><span class="p">]</span>
+<span class="n">Current</span> <span class="n">Labels</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;wing&#39;</span><span class="p">,</span> <span class="s1">&#39;flower core&#39;</span><span class="p">,</span> <span class="s1">&#39;sky&#39;</span><span class="p">,</span> <span class="s1">&#39;flower petal&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Since the clusters are now labeled we can look at the overall (final)
 segmentation.</p>
-<p>Note the following plot function chooses colors randomly so you might
-need to run a few times to get a clear image.</p>
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">butterfly_SA</span><span class="o">.</span><span class="n">plot_clusters</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -652,33 +735,38 @@ other two regions, other than that the segementation seems ok.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tabel</span> <span class="n">of</span> <span class="n">Compositions</span>
 <span class="mf">20.56</span> <span class="o">%</span>      <span class="n">wing</span>
-<span class="mf">21.87</span> <span class="o">%</span>      <span class="n">flower</span>
+<span class="mf">0.95</span> <span class="o">%</span>       <span class="n">flower</span> <span class="n">core</span>
 <span class="mf">57.57</span> <span class="o">%</span>      <span class="n">sky</span>
+<span class="mf">20.92</span> <span class="o">%</span>      <span class="n">flower</span> <span class="n">petal</span>
 <span class="n">Tabel</span> <span class="n">of</span> <span class="n">Grain</span> <span class="n">Count</span>
 <span class="mi">130</span>          <span class="n">wing</span>
-<span class="mi">42</span>   <span class="n">flower</span>
+<span class="mi">2</span>    <span class="n">flower</span> <span class="n">core</span>
 <span class="mi">44</span>   <span class="n">sky</span>
+<span class="mi">40</span>   <span class="n">flower</span> <span class="n">petal</span>
 </pre></div>
 </div>
 <img alt="../_images/output_46_1.png" src="../_images/output_46_1.png" />
 <img alt="../_images/output_46_2.png" src="../_images/output_46_2.png" />
 <div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># these take slighly longer to find</span>
-<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">,</span> <span class="s1">&#39;wing&#39;</span><span class="p">,</span> <span class="s1">&#39;flower&#39;</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">,</span> <span class="s1">&#39;wing&#39;</span><span class="p">,</span> <span class="s1">&#39;flower core&#39;</span><span class="p">,</span> <span class="s1">&#39;flower petal&#39;</span><span class="p">]:</span>
     <span class="n">butterfly_SA</span><span class="o">.</span><span class="n">get_gsd</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 3.0971 scalculating span</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 2.9440 scalculating span</span>
 
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 9.3110 scalculating span</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 8.7556 scalculating span</span>
 
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 2.9703 scalculating span</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 0.0686 scalculating span</span>
 
-<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 3.2278 s</span>
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 2.7868 scalculating span</span>
+
+<span class="n">Progress</span> <span class="o">|</span><span class="c1">###################################################| 3.0739 s</span>
 </pre></div>
 </div>
 <img alt="../_images/output_47_1.png" src="../_images/output_47_1.png" />
 <img alt="../_images/output_47_2.png" src="../_images/output_47_2.png" />
 <img alt="../_images/output_47_3.png" src="../_images/output_47_3.png" />
+<img alt="../_images/output_47_4.png" src="../_images/output_47_4.png" />
 <p>If any of the results want to be further analysed than an option
 return_arr in the above functions get the specific values plotted
 above.</p>

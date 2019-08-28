@@ -168,6 +168,8 @@
 <h1>merging<a class="headerlink" href="#merging" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-TSA.merging.AGNES">
 <span id="agnes"></span><h2>AGNES<a class="headerlink" href="#module-TSA.merging.AGNES" title="Permalink to this headline">¶</a></h2>
+<p>author: Richard Bonye (github Boyne272)
+Last updated on Tue Aug 27 18:23:14 2019</p>
 <dl class="class">
 <dt id="TSA.merging.AGNES.AGNES">
 <em class="property">class </em><code class="descclassname">TSA.merging.AGNES.</code><code class="descname">AGNES</code><span class="sig-paren">(</span><em>features</em>, <em>join_by='max'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES" title="Permalink to this definition">¶</a></dt>
@@ -252,6 +254,8 @@ done before any clustering may occure.</p>
 </div>
 <div class="section" id="module-TSA.merging.Segments">
 <span id="segments"></span><h2>Segments<a class="headerlink" href="#module-TSA.merging.Segments" title="Permalink to this headline">¶</a></h2>
+<p>author: Richard Bonye (github Boyne272)
+Last updated on Tue Aug 27 18:37:15 2019</p>
 <dl class="class">
 <dt id="TSA.merging.Segments.Mask_utilities">
 <em class="property">class </em><code class="descclassname">TSA.merging.Segments.</code><code class="descname">Mask_utilities</code><span class="sig-paren">(</span><em>mask</em>, <em>connected=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.Mask_utilities" title="Permalink to this definition">¶</a></dt>
@@ -301,7 +305,7 @@ each edge and label with a legend.</p>
 
 <dl class="method">
 <dt id="TSA.merging.Segments.segment.fill_mask">
-<code class="descname">fill_mask</code><span class="sig-paren">(</span><em>rgba</em>, <em>color=[]</em>, <em>alpha=0.4</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.fill_mask" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fill_mask</code><span class="sig-paren">(</span><em>rgba</em>, <em>color=None</em>, <em>alpha=0.4</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.fill_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill the given 3d rgba array with this segents cordinates using the given
 color values and given alpha (opaqueness).</p>
 </dd></dl>
@@ -338,7 +342,7 @@ is then stored on each segment and used in the merging functions.</p>
 <dt>confidence_func <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
 <dd>callabel which accepts (X_cords, Y_cords, <a href="#id1"><span class="problematic" id="id2">*</span></a>func_vars) where
 cordinates are of the segment edge with one neighbour and
-returns a single value of the confidence of an edges presence. 
+returns a single value of the confidence of an edges presence.
 By default &gt;1 is consider to be an edge and &lt;-1 is considered
 to be no edge, however this can be overwritten in the mergeing
 functions. Note that X,Y is given in the visible sense
@@ -369,7 +373,7 @@ features of that segment. Note that X,Y is  given in the visible
 sense (i.e. an array is indexed [y, x])</dd>
 <dt>func_vars <span class="classifier-delimiter">:</span> <span class="classifier">tuple of vairables</span></dt>
 <dd>vairable to be passed into the fucntion to evaluate the segments
-feaures. This is often some filtered versions of the original 
+feaures. This is often some filtered versions of the original
 image to be indexed at the segments cordinates</dd>
 </dl>
 <dl class="docutils">
@@ -390,7 +394,7 @@ image to be indexed at the segments cordinates</dd>
 <dd><p>After a clustering has been assigned this merges segments that are
 adjasent and of the same group.</p>
 <p>If an edge_confidence has been calculated for the segments than the
-extra condition that the edge value is below the edge_present 
+extra condition that the edge value is below the edge_present
 parameter is requiered.</p>
 </dd></dl>
 
@@ -439,7 +443,7 @@ back_img kwarg so that it can be put on each subplot.</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>‘segment’ </dt>
+<dt>‘segment’</dt>
 <dd>plots a mask that shades in the segment id given with the kwarg
 ‘segment’ a slighly translucent red.</dd>
 </dl>
@@ -448,13 +452,13 @@ back_img kwarg so that it can be put on each subplot.</dd>
 <dt>‘segment_edge’</dt>
 <dd>plots the edges of the segment id given with the kwarg
 ‘segment’. These are colored and labeled different for each
-different neighbouring segment (if a pixel has more than one 
+different neighbouring segment (if a pixel has more than one
 neighbour segment adjasent it is random which is indicated)</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>‘edge_conf’</dt>
-<dd>plot every segment edge in a color that represents its edge 
+<dd>plot every segment edge in a color that represents its edge
 confidence value.</dd>
 </dl>
 </li>
