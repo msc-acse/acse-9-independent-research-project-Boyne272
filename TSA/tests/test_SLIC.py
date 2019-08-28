@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Last updated on Wed Aug 21 16:47:25 2019
-
-Part of the Automated Thin Section Analysis tool set
-
-@author: Richard Bonye
+author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:53:10 2019
 """
 
+
 import unittest
-import torch
 import os
+import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,8 +21,9 @@ class Test_SLIC(unittest.TestCase):
     """
 
     dir_path = os.path.dirname(os.path.abspath(__file__))
-    test_img_path_1 =  dir_path + '/example_white.tif'
-    
+    test_img_path_1 = dir_path + '/example_white.tif'
+
+
     def test_img_setup(self):
         """
         unit test that the img is converetd to vectors correctly and

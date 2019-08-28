@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jul  5 13:20:45 2019
-
-@author: Richard Bonye
+author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:46:31 2019
 """
+
 
 import sys
 import time as tm
@@ -118,7 +118,7 @@ class progress_bar():
     def plot_time(self, axis=None):
         "plot the time vs iterations on the axis if given"
 
-        if not axis:
+        if axis is None:
             _fig, axis = plt.subplots()
 
         axis.plot(self.iterations, self.times, '-o')

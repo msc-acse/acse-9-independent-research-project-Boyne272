@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Last updated on Wed Aug 21 16:47:25 2019
-
-Part of the Automated Thin Section Analysis tool set
-
-@author: Richard Bonye
+author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:51:40 2019
 """
 
+
 import unittest
+import os
 import torch
 import matplotlib.pyplot as plt
-import os
 
 from TSA.kmeans import MSLIC_wrapper
 from TSA.tools import set_seed, get_img
@@ -24,9 +22,10 @@ class Test_MSLIC_wrapper(unittest.TestCase):
     """
 
     dir_path = os.path.dirname(os.path.abspath(__file__))
-    test_img_path_1 =  dir_path + '/example_white.tif'
-    test_img_path_2 =  dir_path + '/example_polar.tif'
-    
+    test_img_path_1 = dir_path + '/example_white.tif'
+    test_img_path_2 = dir_path + '/example_polar.tif'
+
+
     def test_distance_combination(self):
         """
         test that the img is converetd to vectors correctly and

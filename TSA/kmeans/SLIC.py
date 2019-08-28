@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Last updated on Wed Aug 21 16:47:25 2019
-
-Part of the Automated Thin Section Analysis tool set
-
-@author: Richard Bonye
+author: Richard Bonye (github Boyne272)
+Last updated on Wed Aug 28 08:28:20 2019
 """
+
 
 import torch
 import matplotlib.pyplot as plt
