@@ -60,6 +60,7 @@ release = u'1.0.0'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+	'sphinx.ext.napoleon',
 	'sphinx_rtd_theme',
 ]
 

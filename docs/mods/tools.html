@@ -212,22 +212,23 @@ randomness from cuda kernels</p>
 <dt id="TSA.tools.percent_print">
 <code class="descclassname">TSA.tools.</code><code class="descname">percent_print</code><span class="sig-paren">(</span><em>i</em>, <em>i_max</em>, <em>interval=1</em>, <em>length=50</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.tools.percent_print" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a progress bar or percentage value
-Parameters
-———-
-i : int</p>
+:param i: The current iteration number
+:type i: int
+:param i_max: The total number of iterations to complete
+:type i_max: int
+:param interval: The frequency of updating the progress bar (set high for long</p>
 <blockquote>
-<div>The current iteration number</div></blockquote>
-<dl class="docutils">
-<dt>i_max <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>The total number of iterations to complete</dd>
-<dt>interval <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd>The frequency of updating the progress bar (set high for long
-simulations)</dd>
-</dl>
-<dl class="docutils">
-<dt>updated <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
-<dd>Whether the update bar was updated</dd>
-</dl>
+<div>simulations)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>updated</strong> – Whether the update bar was updated</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

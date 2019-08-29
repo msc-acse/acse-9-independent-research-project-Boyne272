@@ -176,31 +176,33 @@ Last updated on Wed Aug 28 08:28:20 2019</p>
 <dd><p>Implements Kmeans clustering on an image in 5d color position space
 using localised bins on a regular grid to enforce locality.</p>
 <p>SLIC(img, bin_grid, dist_metric=None, dist_metric_args=[1.,])</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>img <span class="classifier-delimiter">:</span> <span class="classifier">3d numpy array</span></dt>
-<dd>Image to be segmented by kmeans,
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>img</strong> (<em>3d numpy array</em>) – Image to be segmented by kmeans,
 expected in shape [x_dim, y_dim, rgb] with all values in the
-interval [0, 1], not 255.</dd>
-<dt>bin_grid <span class="classifier-delimiter">:</span> <span class="classifier">tuple length 2</span></dt>
-<dd>The number of initial partitions in x and y respectivly,
+interval [0, 1], not 255.</li>
+<li><strong>bin_grid</strong> (<em>tuple length 2</em>) – The number of initial partitions in x and y respectivly,
 therefore the number of segments is the product of these.
 Both must be a factor of the x, y dimensions for the whole
 image. This intial segmentation restrains the kmeans centers
 in space, forcing locality of segments and speeding up the
-algorithm.</dd>
-<dt>dist_metric <span class="classifier-delimiter">:</span> <span class="classifier">function, optional</span></dt>
-<dd>The method of calculating distance between vectors and cluster
+algorithm.</li>
+<li><strong>dist_metric</strong> (<em>function</em><em>, </em><em>optional</em>) – The method of calculating distance between vectors and cluster
 centers. This must have form f(vecs, clusts, <a href="#id1"><span class="problematic" id="id2">*</span></a>args) where vecs and
 clusts are rank 2 tensors with samples on the first axis. This
 should return a rank 2 tensor of distances with shape (clusters, vectors)
 such that taking the argmin along dim=1 gives an array of closest
-cluster centroids for each vector.</dd>
-<dt>dist_metric_args <span class="classifier-delimiter">:</span> <span class="classifier">tuple, optional</span></dt>
-<dd>arguments to passed into dist_metric function. By defualt this is
-a single parameter for the bia to color over distance.</dd>
-</dl>
-</div></blockquote>
+cluster centroids for each vector.</li>
+<li><strong>dist_metric_args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – arguments to passed into dist_metric function. By defualt this is
+a single parameter for the bia to color over distance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.kmeans.SLIC.SLIC.get_segmentation">
 <code class="descname">get_segmentation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.kmeans.SLIC.SLIC.get_segmentation" title="Permalink to this definition">¶</a></dt>
@@ -242,15 +244,19 @@ a single parameter for the bia to color over distance.</dd>
 <em class="property">class </em><code class="descclassname">TSA.kmeans.SLIC.</code><code class="descname">bin_base</code><span class="sig-paren">(</span><em>bin_grid</em>, <em>dim_x</em>, <em>dim_y</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.kmeans.SLIC.bin_base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to hold methods for binning vectors into a regular grid.</p>
 <p>bin_base(bin_grid, dim_x, dim_y)</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>bin_grid <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
-<dd>The number of grid cordinates in the x and y directions. Must be
-length 2.</dd>
-<dt>dim_x, dim_y <span class="classifier-delimiter">:</span> <span class="classifier">ints</span></dt>
-<dd>The dimensions of the whole grid</dd>
-</dl>
-</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>bin_grid</strong> (<em>tuple</em>) – The number of grid cordinates in the x and y directions. Must be
+length 2.</li>
+<li><strong>dim_y</strong> (<em>dim_x</em><em>,</em>) – The dimensions of the whole grid</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -267,43 +273,45 @@ combined of each instance to assign clusters in every iteration</p>
 <dt>MSLIC_wrapper(imgs, bin_grid, combo_metric=’max’, combo_metric_args=[],</dt>
 <dd>dist_metric=None, dist_metric_args=[1.,])</dd>
 </dl>
-<dl class="docutils">
-<dt>imgs <span class="classifier-delimiter">:</span> <span class="classifier">list of 3d numpy arrays</span></dt>
-<dd>The imgs on which the SLIC algorithm is to be run in parallel.
-Each must have the same shape and have a</dd>
-<dt>bin_grid <span class="classifier-delimiter">:</span> <span class="classifier">tuple length 2 (same as SLIC)</span></dt>
-<dd>The number of initial partitions in x and y respectivly,
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>imgs</strong> (<em>list of 3d numpy arrays</em>) – The imgs on which the SLIC algorithm is to be run in parallel.
+Each must have the same shape and have a</li>
+<li><strong>bin_grid</strong> (<em>tuple length 2</em><em> (</em><em>same as SLIC</em><em>)</em>) – The number of initial partitions in x and y respectivly,
 therefore the number of segments is the product of these.
 Both must be a factor of the x, y dimensions for the whole
 image. This intial segmentation restrains the kmeans centers
 in space, forcing locality of segments and speeding up the
-algorithm.</dd>
-<dt>combo_metric <span class="classifier-delimiter">:</span> <span class="classifier">string or callable, optional</span></dt>
-<dd><p class="first">The metric by which the distances between vectors and centroids
+algorithm.</li>
+<li><strong>combo_metric</strong> (<em>string</em><em> or </em><em>callable</em><em>, </em><em>optional</em>) – <p>The metric by which the distances between vectors and centroids
 in each image are to be combined. Allowed string options are:
 - ‘max’ maximum of the distances in each image
 - ‘min’ minimum of the distances in each image
 - ‘mean’ average of the distances in each image
 - ‘sum’ total of the distances in each image</p>
-<p class="last">Alternatively a callable function can be used, this function must
+<p>Alternatively a callable function can be used, this function must
 have form f(t, <a href="#id3"><span class="problematic" id="id4">*</span></a>args) where t is a rank 3 tensor of distances with
 shape (img, vectors, clusters) and return a rank 2 tensor of distances
 with shape (vectors, clusters).</p>
-</dd>
-<dt>combo_metric_args <span class="classifier-delimiter">:</span> <span class="classifier">tuple, optional</span></dt>
-<dd>arguments to passed into combo_metric function if given</dd>
-<dt>dist_metric <span class="classifier-delimiter">:</span> <span class="classifier">function, optional</span></dt>
-<dd>Passed into SLIC objects.
+</li>
+<li><strong>combo_metric_args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – arguments to passed into combo_metric function if given</li>
+<li><strong>dist_metric</strong> (<em>function</em><em>, </em><em>optional</em>) – Passed into SLIC objects.
 The method of calculating distance between vectors and cluster
 centers. This must have form f(vecs, clusts, <a href="#id5"><span class="problematic" id="id6">*</span></a>args) where vecs and
 clusts are rank 2 tensors with samples on the first axis. This
 should return a rank 2 tensor of distances with shape (clusters, vectors)
 such that taking the argmin along dim=1 gives an array of closest
-cluster centroids for each vector</dd>
-<dt>dist_metric_args <span class="classifier-delimiter">:</span> <span class="classifier">tuple, optional</span></dt>
-<dd>Passed into SLIC objects.
-arguments to passed into dist_metric function if given</dd>
-</dl>
+cluster centroids for each vector</li>
+<li><strong>dist_metric_args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Passed into SLIC objects.
+arguments to passed into dist_metric function if given</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.kmeans.MSLIC.MSLIC_wrapper.get_segmentation">
 <code class="descname">get_segmentation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TSA.kmeans.MSLIC.MSLIC_wrapper.get_segmentation" title="Permalink to this definition">¶</a></dt>
@@ -321,19 +329,23 @@ arguments to passed into dist_metric function if given</dd>
 <code class="descname">plot</code><span class="sig-paren">(</span><em>objs=[], option='default', axs=[None], path=''</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.kmeans.MSLIC.MSLIC_wrapper.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls obj.plot() on each of the SLIC objects specified with option
 given</p>
-<dl class="docutils">
-<dt>obj_indexs <span class="classifier-delimiter">:</span> <span class="classifier">list of ints, optional</span></dt>
-<dd>which of the SLIC objects to call plot on. If left empty this
-will plot all SLIC objects.</dd>
-<dt>option <span class="classifier-delimiter">:</span> <span class="classifier">string, optional</span></dt>
-<dd>the plot option to be passed to obj.plot, refer to the docstrings
-there for available options</dd>
-<dt>axs <span class="classifier-delimiter">:</span> <span class="classifier">tuple of matplotlib axis, optional</span></dt>
-<dd>the axis to be plotted on, if not given a subplot for each of
-the SLIC objs is used.</dd>
-<dt>path <span class="classifier-delimiter">:</span> <span class="classifier">string, optional</span></dt>
-<dd>the path to save the figure on if wanted</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj_indexs</strong> (<em>list of ints</em><em>, </em><em>optional</em>) – which of the SLIC objects to call plot on. If left empty this
+will plot all SLIC objects.</li>
+<li><strong>option</strong> (<em>string</em><em>, </em><em>optional</em>) – the plot option to be passed to obj.plot, refer to the docstrings
+there for available options</li>
+<li><strong>axs</strong> (<em>tuple of matplotlib axis</em><em>, </em><em>optional</em>) – the axis to be plotted on, if not given a subplot for each of
+the SLIC objs is used.</li>
+<li><strong>path</strong> (<em>string</em><em>, </em><em>optional</em>) – the path to save the figure on if wanted</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

@@ -175,24 +175,30 @@ Last updated on Tue Aug 27 18:23:14 2019</p>
 <em class="property">class </em><code class="descclassname">TSA.merging.AGNES.</code><code class="descname">AGNES</code><span class="sig-paren">(</span><em>features</em>, <em>join_by='max'</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clusters the given feature vectors by the AGNES algorithm</p>
 <p>AGNES(features, join_by=’max’)</p>
-<dl class="docutils">
-<dt>features <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>The features to cluster by with dimensions (n_samples, n_features).
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>features</strong> (<em>2d numpy array</em>) – The features to cluster by with dimensions (n_samples, n_features).
 It is advised to input features with normalised distributions
 as they are not scaled here and this is a distance based clustering
-algoithm</dd>
-<dt>join_by <span class="classifier-delimiter">:</span> <span class="classifier">string (optional)</span></dt>
-<dd><p class="first">The method by which to recalculate distance to a new group after
+algoithm</li>
+<li><strong>join_by</strong> (<em>string</em><em> (</em><em>optional</em><em>)</em>) – <p>The method by which to recalculate distance to a new group after
 merging occures. Allowed options are:</p>
-<blockquote class="last">
-<div><ul class="simple">
-<li>‘max’ takes the new clusters distance as the maximum of
+<blockquote>
+<div><ul>
+<li>’max’ takes the new clusters distance as the maximum of
 either of the joined vectors distances</li>
-<li>‘min’ same as above but with minimum distance</li>
+<li>’min’ same as above but with minimum distance</li>
 </ul>
 </div></blockquote>
-</dd>
-</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.merging.AGNES.AGNES.cluster_by_derivative">
 <code class="descname">cluster_by_derivative</code><span class="sig-paren">(</span><em>n_std=3.0</em>, <em>plot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_by_derivative" title="Permalink to this definition">¶</a></dt>
@@ -223,23 +229,28 @@ Plot will plot the grouping projection in 2d.</p>
 <dt id="TSA.merging.AGNES.AGNES.cluster_distance_plot">
 <code class="descname">cluster_distance_plot</code><span class="sig-paren">(</span><em>option='all'</em>, <em>ax=None</em>, <em>last_few=True</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.AGNES.AGNES.cluster_distance_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the option vs iterations on the given axis</p>
-<dl class="docutils">
-<dt>option <span class="classifier-delimiter">:</span> <span class="classifier">string (optional)</span></dt>
-<dd><p class="first">What to plot aginst iteration, choose from:
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>option</strong> (<em>string</em><em> (</em><em>optional</em><em>)</em>) – <p>What to plot aginst iteration, choose from:
 - ‘dists’ plots the join distance
 - ‘1st’ plots the numerical first derivative
 - ‘2nd’plots the numerical second derivative
 - ‘all’ (default) plots plots all of the above</p>
-<blockquote class="last">
+<blockquote>
 <div>(ignores ax and last few)</div></blockquote>
-</dd>
-<dt>ax <span class="classifier-delimiter">:</span> <span class="classifier">Matplotlib axis (optional)</span></dt>
-<dd>The axis to plot on, one is created if not given. If ‘all’ chosen
-then this setting is ignored</dd>
-<dt>last_few <span class="classifier-delimiter">:</span> <span class="classifier">bool (optional)</span></dt>
-<dd>Plot only the last 25 points (or all if less than 25 in total).
-If ‘all’ chosen then this setting is ignored</dd>
-</dl>
+</li>
+<li><strong>ax</strong> (<em>Matplotlib axis</em><em> (</em><em>optional</em><em>)</em>) – The axis to plot on, one is created if not given. If ‘all’ chosen
+then this setting is ignored</li>
+<li><strong>last_few</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Plot only the last 25 points (or all if less than 25 in total).
+If ‘all’ chosen then this setting is ignored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -262,13 +273,19 @@ Last updated on Tue Aug 27 18:37:15 2019</p>
 <dd><p>A collection of utilities for minipulating a mask, such as getting its
 outline or creating an rgba array for plotting</p>
 <p>Mask_utilities(mask, connected=True)</p>
-<dl class="docutils">
-<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>integer array to be used</dd>
-<dt>connected <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd>if true will enforce connectivity of each region in the mask
-via skimgs morphology package. Defaults to true.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask</strong> (<em>2d numpy array</em>) – integer array to be used</li>
+<li><strong>connected</strong> (<em>bool</em><em>, </em><em>optional</em>) – if true will enforce connectivity of each region in the mask
+via skimgs morphology package. Defaults to true.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
@@ -277,18 +294,22 @@ via skimgs morphology package. Defaults to true.</dd>
 <dd><p>A single segment which holds its constituent pixels, edge pixels and
 figures out its neighbours. This is to be used by the segment_group obj.</p>
 <p>segment(cords, edges, index, group_obj)</p>
-<dl class="docutils">
-<dt>cords <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>The cordinates of this segments pixels in shape (N, 2) where N is the
-number of pixels and the second axis is the X, Y cordinates</dd>
-<dt>edges <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>The cordinates of this segments edge pixels in the same shape as cords</dd>
-<dt>index <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>The id of this segment used in the segment_group.seg_dict</dd>
-<dt>group_obj <span class="classifier-delimiter">:</span> <span class="classifier">segment_group obj</span></dt>
-<dd>The segment_group which holds all segment objects. This is used to
-access the locations of other segments in order to find neighbours</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cords</strong> (<em>2d numpy array</em>) – The cordinates of this segments pixels in shape (N, 2) where N is the
+number of pixels and the second axis is the X, Y cordinates</li>
+<li><strong>edges</strong> (<em>2d numpy array</em>) – The cordinates of this segments edge pixels in the same shape as cords</li>
+<li><strong>index</strong> (<em>int</em>) – The id of this segment used in the segment_group.seg_dict</li>
+<li><strong>group_obj</strong> (<em>segment_group obj</em>) – The segment_group which holds all segment objects. This is used to
+access the locations of other segments in order to find neighbours</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.merging.Segments.segment.edge_mask">
 <code class="descname">edge_mask</code><span class="sig-paren">(</span><em>arr</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment.edge_mask" title="Permalink to this definition">¶</a></dt>
@@ -320,10 +341,14 @@ though the use of segment instances. Upon initalisation these segments
 locate their neighbours, edges and enforce connectivity of each segment.
 Note the neighbour identification is a costly process.</p>
 <p>segment_group(mask)</p>
-<dl class="docutils">
-<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>integer array of a mask governing a segmentation</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mask</strong> (<em>2d numpy array</em>) – integer array of a mask governing a segmentation</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.merging.Segments.segment_group.assign_clusters">
 <code class="descname">assign_clusters</code><span class="sig-paren">(</span><em>clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.assign_clusters" title="Permalink to this definition">¶</a></dt>
@@ -338,20 +363,26 @@ before the merging is done.</p>
 <dd><p>Loop over every segment with the confidence function to obtain the
 edge confidence between every neighbour pair. This confidence value
 is then stored on each segment and used in the merging functions.</p>
-<dl class="docutils">
-<dt>confidence_func <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
-<dd>callabel which accepts (X_cords, Y_cords, <a href="#id1"><span class="problematic" id="id2">*</span></a>func_vars) where
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>confidence_func</strong> (<em>callable</em>) – callabel which accepts (X_cords, Y_cords, <a href="#id1"><span class="problematic" id="id2">*</span></a>func_vars) where
 cordinates are of the segment edge with one neighbour and
 returns a single value of the confidence of an edges presence.
 By default &gt;1 is consider to be an edge and &lt;-1 is considered
 to be no edge, however this can be overwritten in the mergeing
 functions. Note that X,Y is given in the visible sense
-(i.e. an array is indexed [y, x])</dd>
-<dt>func_vars <span class="classifier-delimiter">:</span> <span class="classifier">tuple of vairables</span></dt>
-<dd>vairable to be passed into the fucntion to evaluate the segments
+(i.e. an array is indexed [y, x])</li>
+<li><strong>func_vars</strong> (<em>tuple of vairables</em>) – vairable to be passed into the fucntion to evaluate the segments
 edge confidence. This is often some edge detected versions of the
-original image to be indexed at the segments cordinates</dd>
-</dl>
+original image to be indexed at the segments cordinates</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -365,21 +396,29 @@ original image to be indexed at the segments cordinates</dd>
 <code class="descname">feature_extraction</code><span class="sig-paren">(</span><em>extract_func</em>, <em>func_vars</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.merging.Segments.segment_group.feature_extraction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop over every segment with the extract function to obtain the
 feature vectors for each segement.</p>
-<dl class="docutils">
-<dt>extract_func <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
-<dd>callabel which accepts (X_cords, Y_cords, <a href="#id3"><span class="problematic" id="id4">*</span></a>func_vars) where
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>extract_func</strong> (<em>callable</em>) – callabel which accepts (X_cords, Y_cords, <a href="#id3"><span class="problematic" id="id4">*</span></a>func_vars) where
 the cordinates are of a single segment and returns a tuple of
 features of that segment. Note that X,Y is  given in the visible
-sense (i.e. an array is indexed [y, x])</dd>
-<dt>func_vars <span class="classifier-delimiter">:</span> <span class="classifier">tuple of vairables</span></dt>
-<dd>vairable to be passed into the fucntion to evaluate the segments
+sense (i.e. an array is indexed [y, x])</li>
+<li><strong>func_vars</strong> (<em>tuple of vairables</em>) – vairable to be passed into the fucntion to evaluate the segments
 feaures. This is often some filtered versions of the original
-image to be indexed at the segments cordinates</dd>
-</dl>
-<dl class="docutils">
-<dt>feats <span class="classifier-delimiter">:</span> <span class="classifier">2d array</span></dt>
-<dd>array of segment features with shape (n segments, n features)</dd>
-</dl>
+image to be indexed at the segments cordinates</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>feats</strong> – array of segment features with shape (n segments, n features)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">2d array</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">

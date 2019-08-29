@@ -177,15 +177,20 @@ Last updated on Wed Aug 28 08:36:46 2019</p>
 each cluster. Then the appropirate distriubtions of the labelled clusters
 are calculated.</p>
 <p>Segment_Analyser(img, mask, clusters)</p>
-<dl class="docutils">
-<dt>img <span class="classifier-delimiter">:</span> <span class="classifier">2d or 3d numpy array</span></dt>
-<dd>An rgb, rgba, or grey scale array of the image. Used for visulisation
-only</dd>
-<dt>mask <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>Segmentation mask for analysing distibuions</dd>
-<dt>clusters <span class="classifier-delimiter">:</span> <span class="classifier">2d numpy array</span></dt>
-<dd>Clustering mask for identifying different materials</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>img</strong> (<em>2d</em><em> or </em><em>3d numpy array</em>) – An rgb, rgba, or grey scale array of the image. Used for visulisation
+only</li>
+<li><strong>mask</strong> (<em>2d numpy array</em>) – Segmentation mask for analysing distibuions</li>
+<li><strong>clusters</strong> (<em>2d numpy array</em>) – Clustering mask for identifying different materials</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_composition">
 <code class="descname">get_composition</code><span class="sig-paren">(</span><em>return_arr=False</em><span class="sig-paren">)</span><a class="headerlink" href="#TSA.pre_post_processing.Segment_Analyser.Segment_Analyser.get_composition" title="Permalink to this definition">¶</a></dt>
