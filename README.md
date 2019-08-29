@@ -1,10 +1,10 @@
 # Automated Thin Section Analysis
 
-Independent Research Project for MSc Applied Computational Science and Engineering
+**Independent Research Project for MSc Applied Computational Science and Engineering**
 
-Richard Boyne (GitHub: Boyne272, CID: 01057503, email: rmb115@ic.ac.uk)
+**Richard Boyne (GitHub: Boyne272, CID: 01057503, email: rmb115@ic.ac.uk)**
 
-This repo holds the Thin Section Analysis (TSA) python package. Full documentation and user manual available [here](https://boyne272.github.io/acse-9-independent-research-project-Boyne272/index.html) (via forked repo)
+**This repo holds the Thin Section Analysis (TSA) python package, a tool set designed to help build workflows to automate aspects of thin section image analysis. Full documentation and user manual (with examples) is available [here](https://msc-acse.github.io/acse-9-independent-research-project-Boyne272/index.html)**
 
 
 ## Repository Structure
@@ -20,6 +20,10 @@ This repo holds the Thin Section Analysis (TSA) python package. Full documentati
 Refer to the documentation for instructions on how to install the package. Alternatively if notebooks/User_manual.ipynb is loaded into Google Colab one can use the entire package from there. One can also download the repository and open these notebooks locally, but you must then take caution with file paths in the installation and example codes.
 
 ## Notes to the Examiner
-As the User_manual.ipynb is in the documentation page you can view it from there as GitHub online notebook viewer often struggles with large notebooks. If you need to run the code I recommend using the User_manual.ipynb in Google Colab as described above. Hope the repo and code are clear to follow. As always here is an appropriate meme :p
+As the User_manual.ipynb is in the documentation page you can view it from there as GitHub online notebook viewer often struggles with large notebooks. If you need to run the code I recommend using the User_manual.ipynb in Google Colab as described above. Hope the repo and code are clear to follow.
+
+For the report 12pt has been used with latex default font, the page count is 22 for the report body, plus 3 title and contense pages (meeting 25 page requirement), plus 5 biblography/appendix (so 30 in total).
+
+As always here is an appropriate meme :p
 
 ![TS meme to lighten the mood](images/meme.jpg "TS meme to lighten the mood")
