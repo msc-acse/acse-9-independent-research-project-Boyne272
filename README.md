@@ -8,12 +8,16 @@
 
 
 ## Repository Structure
-- TSA/ is the module directory, holding the submodule code (K-means, merging, pre_post_processing, tools) and tests for all these. pip in the repo will use setup.py to install this module and pytest will run all module tests (see user manual for more detailed instructions).
-- images/ holds a several sample (1000x1000) TS image sections. These were used to collect results for the final report.
-- docs/ holds sphinx generated documentation in HTML format. Due to admin restrictions on this repository's settings the repo has been forked to host the documentation via GitHub pages.
-- sphinx/ holds the code used to generate the documentation in docs/.
-- notebooks/ holds all notebooks used to develop and run the given code (in the [Google Colab environment](https://colab.research.google.com/notebooks/welcome.ipynb#recent=true)). This includes Thin_Sections_Workspace.ipynb used to develop and experiment with code, Results.iypnb which generates all figures and values used in the report and User_manual.ipynb which is an interactive version of the user manual found on the documentation page.
-- Preliminary Report Richard Boyne.pdf and Final Report Richard Boyne.pdf are the project plan and report (submitted 5th June and 30th August respectively)
+* TSA/ is the module directory, holding the submodule code and tests for all these. pip in the repo will use setup.py to install this module and pytest will run all module tests (see user manual for more detailed instructions). Submodules are:
+  - kmeans, code for using vairations of kmeans clustering to over-segment the input image
+  - merging, code for clustering and merging segments to not be over-segmented
+  - pre_post_processing, code for pre-processing images and analysing the resulting segments
+  - tools, some common code used by all other modules such as progress bar
+* images/ holds a several sample (1000x1000) TS image sections. These were used to collect results for the final report.
+* docs/ holds sphinx generated documentation in HTML format. Due to admin restrictions on this repository's settings the repo has been forked to host the documentation via GitHub pages.
+* sphinx/ holds the code used to generate the documentation in docs/.
+* notebooks/ holds all notebooks used to develop and run the given code (in the [Google Colab environment](https://colab.research.google.com/notebooks/welcome.ipynb#recent=true)). This includes Thin_Sections_Workspace.ipynb used to develop and experiment with code, Results.iypnb which generates all figures and values used in the report and User_manual.ipynb which is an interactive version of the user manual found on the documentation page.
+* Preliminary Report Richard Boyne.pdf and Final Report Richard Boyne.pdf are the project plan and report (submitted 5th June and 30th August respectively)
 
 
 ## Installation
