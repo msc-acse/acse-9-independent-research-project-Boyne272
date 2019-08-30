@@ -4,7 +4,7 @@
 
 **Richard Boyne (GitHub: Boyne272, CID: 01057503, email: rmb115@ic.ac.uk)**
 
-**This repo holds the Thin Section Analysis (TSA) python package, a tool set designed to help build workflows to automate aspects of thin section image analysis. Full documentation and user manual (with examples) is available [here](https://msc-acse.github.io/acse-9-independent-research-project-Boyne272/index.html)**
+**This repo holds the Thin Section Analysis (TSA) python package, a tool set designed to help build workflows to automate aspects of thin section image analysis. Full documentation and user manual (with examples) is [available here](https://msc-acse.github.io/acse-9-independent-research-project-Boyne272/index.html)**
 
 
 ## Repository Structure
@@ -20,8 +20,24 @@
 * Preliminary Report Richard Boyne.pdf and Final Report Richard Boyne.pdf are the project plan and report (submitted 5th June and 30th August respectively)
 
 
-## Installation
-Refer to the documentation for instructions on how to install the package. Alternatively if notebooks/User_manual.ipynb is loaded into Google Colab one can use the entire package from there. One can also download the repository and open these notebooks locally, but you must then take caution with file paths in the installation and example codes.
+## Installation and Tests
+To install the pre-requisits use pip with the requirements.txt
+```
+pip install -r requirements.txt
+```
+To insiall the TSA package also use pip
+```
+pip install setup.py
+```
+Tests are impleneted with unittest and can be run via pytest. To run them this way, both need to be installed (seperately to requirements) and then the following run
+```
+pytest TSA
+```
+More detailed instructions and examples of code functionality are shown in the [documentation](https://msc-acse.github.io/acse-9-independent-research-project-Boyne272/index.html). Alternatively if notebooks/User_manual.ipynb is loaded into Google Colab one can use the use the documentation interactivly. One can also download the repository and open these notebooks locally, but you must then take caution with file paths in the installation and example codes.
+
+
+## Licence
+This is project is licenece under the MIT free software license, so can be used in any non-proprietary software development or package.
 
 ## Notes to the Examiner
 As the User_manual.ipynb is in the documentation page you can view it from there as GitHub online notebook viewer often struggles with large notebooks. If you need to run the code I recommend using the User_manual.ipynb in Google Colab as described above. Hope the repo and code are clear to follow.
